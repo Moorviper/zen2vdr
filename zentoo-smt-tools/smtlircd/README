@@ -1,0 +1,46 @@
+zenegafbd: a remote control daemon for the BOSE Zenega Set-Top-Box
+Copyright (C) 2006 D.Herrendoerfer
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+Introduction
+------------
+
+Zenegafbd is a remote control daemon for the Zenega 101S CI and possibly other
+similar satelite receiver set-top-boxes available today.
+The Zenega line of set top boxes with DVB capabilities use 2 different 
+controllers for DVB and IP-TV. These are interconnected using a serial line
+and utilize a simple message protocol for sending and receiving messages.
+Zenegafbd is needed to make the two work together.
+
+
+Installing
+----------
+
+Simply type 'make && make install'.
+Then set zenegafbd up so it is started at boot time.
+
+Supported Functions
+----------------------
+
+- Switching to Linux and back to Satelite tuner.
+- Setting the clock ( initially )
+- Selecting TV mode ( backend missing )
+- Setting IP info ( backend missing )
+- Setting master volume on linux.
+
+Have fun.
+
+D.Herrendoerfer <herrend [at] acmelabs [dot] de>

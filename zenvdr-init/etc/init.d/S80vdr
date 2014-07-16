@@ -1,0 +1,89 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+echo -n "VDR: "
+
+start() {
+rm -f /tmp/vdr.log
+
+# Make the directory for recordings
+[ -e /storage/video ] || mkdir /storage/video
+
+#
+# Restore the config files in the tmp directory
+#
+
+echo -n "epg "
+if [ -e /storage/epg.data.bz2 ]; then
+  bzcat /storage/epg.data.bz2 > /tmp/epg.data
+fi
+
+echo -n "vdr "
+for i in /tmp/config/conf/etc/vdr/*.conf; do
+  [ -e ${i} ] && cp ${i} /etc/vdr
+done
+
+/etc/vdr/vdr-server.sh &
+
+while [ ! -e /tmp/vdr.log ]; do
+  echo -n "."
+  sleep 1
+done
+}
+
+stop() {
+echo -n "vdr "
+killall vdr
+for i in 1 2 3 4 5 6 7 8 9 10 11 12 13 14 15; do
+  if ! pidof vdr > /dev/null ; then
+    echo -n "($i seconds) "
+
+    echo -n "epg "
+    # Save the config files
+    if [ -e /tmp/epg.data ]; then
+      cat /tmp/epg.data | bzip2 > /storage/epg.data.bz2
+      rm /tmp/epg.data
+    fi
+
+    echo -n "config "
+
+    [ -e /tmp/config/conf/etc/vdr/plugins ] || mkdir -p /tmp/config/conf/etc/vdr/plugins
+
+    for i in /etc/vdr/*.conf; do
+      [ -e ${i} ] && cp ${i} /tmp/config/conf/etc/vdr
+    done
+    
+    # Save the current config, but make sure to delete the old first.
+    [ -e /tmp/config/conf/vdr-config.tgz ] && rm /tmp/config/conf/vdr-config.tgz
+    [ -e /tmp/vdr-config.tgz ] && cp /tmp/vdr-config.tgz /tmp/config/conf
+
+    break
+  fi
+  sleep 1
+done
+}
+
+restart() {
+  echo "To do."
+}
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+echo "OK"
+
+exit $?

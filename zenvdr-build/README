@@ -1,0 +1,39 @@
+zenvdr-build: An automated installer for the VideoDiskRecorder program
+Copyright (C) 2008 D.Herrendoerfer
+
+This program is free software; you can redistribute it and/or
+modify it under the terms of the GNU General Public License
+as published by the Free Software Foundation; either version 2
+of the License, or (at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA  02110-1301, USA.
+
+Introduction
+------------
+
+This collection of scripts aids the building of the VDR software package
+in a number of configurations, either locally or into another system.
+The process of building and installing is split into three parts that are
+called by the main script:
+1st: prep() -     This is used to prepare the source package.
+                  Download, extract, patch, configure.
+
+2nd: install() -  This is used to install the packages.
+                  Either by the books (make install) or by hand.
+
+3rd: config() -   This can be used to process specific config files
+                  if needed.
+
+Installing
+----------
+
+Simply type './vdr-build.sh' this will install things locally.
+
+D.Herrendoerfer <herrend [at] acmelabs [dot] de>

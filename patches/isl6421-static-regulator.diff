@@ -1,0 +1,69 @@
+--- ../linux-2.6.36-aufs/drivers/media/video/cx88/cx88-dvb.c	2011-04-16 19:54:48.000000000 +0200
++++ linux-2.6.36-aufs/drivers/media/video/cx88/cx88-dvb.c	2010-10-20 22:30:22.000000000 +0200
+@@ -788,55 +788,16 @@
+ 	struct cx88_core *core = dev->core;
+ 
+ 	u8 data;
+-	struct i2c_msg msg [2] = {{
++	struct i2c_msg msg = {
+ 		.addr = 8,
+ 		.flags = 0,
+ 		.buf = &data,
+-		.len = sizeof(data) 
+-		},
+-		{
+-		.addr = 8,
+-		.flags = I2C_M_RD,
+-		.buf = &data,
+-		.len = sizeof(data) }};
+-
+-	if (i2c_transfer(&dev->core->i2c_adap, &msg[1], 1) != 1) 
+-		return -EIO;
++		.len = sizeof(data) };
+ 
+ 	cx_set(MO_GP0_IO, 0x8000);
+ 
+-	printk(KERN_INFO "SAMSUNG debug: LNB data: 0x%02x \n",data);
+-	if ( ((data & ISL6421_LLC1) == 0) && ( voltage == SEC_VOLTAGE_13 ||  voltage == SEC_VOLTAGE_18 )) {
+-		/*Pull up voltage using static current limiting*/
+-		printk(KERN_INFO "SAMSUNG debug: Warming LNB. (data: 0x%x)\n",data);
+-		data = ISL6421_EN1 | ISL6421_LLC1 | ISL6421_DCL ;
+-		cx_clear(MO_GP0_IO, 0x80);
+-		i2c_transfer(&dev->core->i2c_adap, &msg[0], 1);
+-		msleep(400);
+-		i2c_transfer(&dev->core->i2c_adap, &msg[1], 1);
+-		while ((data & ISL6421_OLF1) == 1) {
+-			printk(KERN_INFO "SAMSUNG debug: overlimit.\n");
+-			msleep(200);
+-			i2c_transfer(&dev->core->i2c_adap, &msg[1], 1);
+-		}
+-		
+-	}
+-
+-	if ( ((data & ISL6421_OLF1) == 1) ) {
+-		data = data | ISL6421_DCL ;
+-		i2c_transfer(&dev->core->i2c_adap, &msg[0], 1);
+-		msleep(100);
+-		i2c_transfer(&dev->core->i2c_adap, &msg[1], 1);
+-		while ((data & ISL6421_OLF1) == 1) {
+-			printk(KERN_INFO "SAMSUNG debug: overlimit -> brute !!!.\n");
+-			msleep(200);
+-			i2c_transfer(&dev->core->i2c_adap, &msg[1], 1);
+-		}
+-	}
+-
+ 	switch (voltage) {
+ 	case SEC_VOLTAGE_OFF:
+-		data = 0;
+ 		break;
+ 	case SEC_VOLTAGE_13:
+ 		data = ISL6421_EN1 | ISL6421_LLC1;
+@@ -850,7 +811,7 @@
+ 		return -EINVAL;
+ 	};
+ 
+-	return (i2c_transfer(&dev->core->i2c_adap, &msg[0], 1) == 1) ? 0 : -EIO;
++	return (i2c_transfer(&dev->core->i2c_adap, &msg, 1) == 1) ? 0 : -EIO;
+ }
+ 
+ static int samsung_smt_7020_stv0299_set_symbol_rate(struct dvb_frontend *fe,

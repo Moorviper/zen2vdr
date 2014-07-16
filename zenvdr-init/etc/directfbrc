@@ -1,0 +1,17 @@
+mode=720x576
+depth=32
+pixelformat=AiRGB
+#primary-only
+#primary-layer=0
+hardware
+dma
+agp=4
+vt-switch
+graphics-vt
+#i8xx_overlay_pipe_b
+disable-module=ps2mouse
+disable-module=keyboard
+disable-module=lirc
+disable-module=linux_input
+
+log-file=/tmp/directfb.log

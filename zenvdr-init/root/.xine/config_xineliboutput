@@ -1,0 +1,6 @@
+.version:2
+audio.device.alsa_front_device:default
+audio.synchronization.av_sync_method:resample
+engine.buffers.video_num_buffers:400
+engine.buffers.video_num_frames:21
+engine.performance.memcpy_method:sse

@@ -1,0 +1,134 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+echo -n "USERCONF: "
+
+# Restore local configuration part 2 ( user part )
+
+echo -n "mount "
+
+# Note: we attempt to mount /storage here no matter what.
+#       this is to support recording to dos formattet disks
+#       and USB-Sticks
+
+. /etc/adminbase.conf
+
+# Load features.conf if present, will be overwritten during load
+if [ -e /etc/features.conf ]; then
+  . /etc/features.conf
+fi
+
+if [ X${VIDEO_DEVICE} != Xnone -a X${VIDEO_DEVICE} != X ]; then
+  if [ ${VIDEO_DEVICE} == "usbstick" -o ${VIDEO_DEVICE} == "usbdisk" ]; then
+    echo -n "waitfor_usb "
+    RC=1;
+    while [ $RC != 0 ]; do
+      sleep 1
+      dmesg | grep -q sda1
+      RC=$?
+    done
+  fi
+  if [ ${VIDEO_DEVICE} == "usbstick" ]; then
+    echo -n "mount_usb "
+    mount -t ${VIDEO_MOUNT_TYPE} /dev/sda1 /storage
+    RC=$?
+  fi
+  if [ ${VIDEO_DEVICE} == "disk" -o ${VIDEO_DEVICE} == "usbdisk" ]; then
+    echo -n "mount_disk "
+    fsck -C -a ${VIDEO_MOUNT_DISK}  > /dev/null
+    mount -t ${VIDEO_MOUNT_TYPE} /dev/${VIDEO_MOUNT_DISK} /storage
+    RC=$?
+    if [ ${RC} != 0 ]; then
+      echo -n "FAILED "
+      mount -t tmpfs tmpfs /storage
+    fi
+  fi
+else
+  [ X${VIDEO_DEVICE} != Xnetwork ] && mount -t tmpfs tmpfs /storage
+fi
+
+# Enable swap if the user specifically requests it
+# Swap on FLASH media is not a good idea - but if used carefully
+# it can greatly extend the possibilities of this system.
+# But normaly this should be avoided.
+if [ "${SWAP_DISK}" != "" -a "${SWAP_DISK}" != "none" -a ! -e /tmp/failsafe ]; then
+  if [ "${SWAP_DISK}" == "file" ]; then
+    [ -e /storage/zen.swap ] && swapon /storage/zen.swap
+  else
+    swapon /dev/${SWAP_DISK}
+  fi
+fi
+
+echo -n "updates_2 "
+
+for i in /storage/updates/*.tgz; do
+  [ ! -e ${i} ] && continue
+  if ( echo ${i} | grep -q /plg- ); then
+    tar xzpf ${i} -C / "./etc/vdr.d"
+    echo -n "p"
+  else
+    [ ! -e /tmp/failsafe ] && tar xzpf ${i} -C /
+    echo -n "u"
+  fi
+done
+echo -n " "
+
+mkdir /tmp/rom
+
+for i in /tmp/config/updates/*.sqfs /storage/updates/*.sqfs; do
+  [ ! -e ${i} ] && continue
+  if ( echo ${i} | grep -q /ftr- ); then
+    FTR_NAME=`echo ${i} | tr '.' '-' | awk -F "-" '{ print $2 }'`
+    eval ACTIVATE=\${FTR_$FTR_NAME}
+    if [ "${ACTIVATE}" == "1" -a ! -e /tmp/failsafe ]; then
+      mkdir /tmp/rom/${FTR_NAME}
+      mount -o loop ${i} /tmp/rom/${FTR_NAME}
+      cd /tmp/rom/${FTR_NAME}
+      DIR=""
+      for a in `find .`; do
+        [ "$a" == "." ] && continue
+        SKIP=0
+        for f in $DIR; do
+          `echo X$a | grep -q "X$f"` && SKIP=1 && break
+        done
+        [ "$SKIP" == "1" ] && continue 
+        if `echo X$a | grep -q "X./etc"`; then 
+          [ -f $a ] && cp -p $a /$a && continue
+          [ -d $a ] && [ ! -e /$a ] && mkdir /$a
+          continue
+        else
+          if `echo X$a | grep -q "X./var"`; then 
+            [ -f $a ] && cp -p $a /$a && continue
+            [ -d $a ] && [ ! -e /$a ] && mkdir /$a
+            continue
+          else
+            if `echo X$a | grep -q "X./storage.install"`; then 
+              continue
+            fi
+          fi
+        fi
+        [ -d $a ] && [ ! -e /$a ] && DIR=$DIR" "$a && ln -sf `pwd`/$a /$a && continue
+        ln -sf `pwd`/$a /$a
+      done
+      echo -n "R"
+      echo FTR_${FTR_NAME}=${ACTIVATE} >> /tmp/features.conf.tmp
+      echo "/etc/features.conf:FTR_${FTR_NAME}:${ACTIVATE}:B:${ACTIVATE}:Nein,Ja:${FTR_NAME}:" >> /tmp/admin_features.conf
+    else
+      # Fix ACTIVATE to zero for failsafe mode or newly installed features
+      ACTIVATE=0
+      echo FTR_${FTR_NAME}=${ACTIVATE} >> /tmp/features.conf.tmp
+      echo "/etc/features.conf:FTR_${FTR_NAME}:${ACTIVATE}:B:${ACTIVATE}:Nein,Ja:${FTR_NAME}:" >> /tmp/admin_features.conf
+    fi
+  fi
+done
+
+mv /tmp/features.conf.tmp /etc/features.conf
+echo -n " "
+
+echo -n "S99local "
+[ -e /tmp/config/conf/etc/init.d/S99local ] && cp /tmp/config/conf/etc/init.d/S99local /etc/init.d/S99local
+echo -n " "
+
+echo "OK"

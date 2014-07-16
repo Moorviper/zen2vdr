@@ -1,0 +1,69 @@
+# Sample vdr build system config file
+#
+# This script is executed from the main VDR build script when a component
+# or plugin is to be installed into the VDR build environment.
+#
+# Functions within the script are:
+#
+#  - prep(): To configure a plugin before compiling VDR or to patch VDR
+#
+#  - install(): To install a plugin or feature package or its components
+#
+#  - config(): To write a VDR config options file for this feature or package
+#
+#
+
+PACKAGE_NAME="1.7.16-liemikuutio"
+PACKAGE_VER="1.30"
+
+echo "Conf script for vdr-${PACKAGE_NAME}-$PACKAGE_VER"-patch
+
+# Remember where we came from
+OLD_DIR=`pwd`
+
+prep() {
+  echo "Starting prep for component: ${0}"
+  
+  echo "Source package."
+  if [ ! -e ${DL_DIR}/vdr-${PACKAGE_NAME}-${PACKAGE_VER}.patch ]; then
+    wget http://www.saunalahti.fi/~rahrenbe/vdr/patches/vdr-${PACKAGE_NAME}-${PACKAGE_VER}.patch.gz -P ${DL_DIR}
+    RC=$?
+    if [ ! $RC == 0 ]; then
+      echo FAILED;
+      exit 1
+    fi
+    gunzip ${DL_DIR}/vdr-${PACKAGE_NAME}-${PACKAGE_VER}.patch.gz 
+  fi
+
+  cd ${VDR_DIR}
+
+  patch -p1 < ${DL_DIR}/vdr-${PACKAGE_NAME}-${PACKAGE_VER}.patch
+
+  cd ${OLD_DIR}
+}
+
+install() {
+  echo "Starting install for component: ${0}"
+  echo "Nothing to do."
+}
+
+config() {
+  echo "Starting config for component: ${0}"
+  echo "Nothing to do."
+}
+
+case "$1" in
+  (prep)
+    prep
+    ;;
+  (install)
+    install
+    ;;
+  (config)
+    config
+    ;;
+  *)
+    echo $"Usage: $0 {prep|install|config}"
+    exit 1
+esac
+

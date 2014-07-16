@@ -1,0 +1,135 @@
+
+
+STV6421:
+
+Hallo Climber,
+ich habe das datasheet gefunden und dein SMT-scart Script um das Durchschleifen des RGB&FB des VCR erweitert:
+
+#!/bin/bash
+SMBUS=0
+if [ ! -d /tmp/vcr ]; then
+  /usr/local/sbin/i2cset -y ${SMBUS} 0x4a 0x02 0x03 #vcr-video auf SCART1
+  /usr/local/sbin/i2cset -y ${SMBUS} 0x4a 0x01 0x2a #vcr-audio auf SCART1
+  <span style='color:red'>/usr/local/sbin/i2cset -y ${SMBUS} 0x4a 0x03 0xfb # vcr RGB&FB auf SCART1</span>
+  mkdir /tmp/vcr
+else
+  /usr/local/sbin/i2cset -y ${SMBUS} 0x4a 0x02 0x01 #TV-video auf SCART1
+  /usr/local/sbin/i2cset -y ${SMBUS} 0x4a 0x01 0x11 #TV-audio auf SCART1
+  <span style='color:red'>/usr/local/sbin/i2cset -y ${SMBUS} 0x4a 0x03 0xf6 #TV RGB&FB auf SCART1</span>
+  rmdir /tmp/vcr
+fi
+
+Damit funktioniert es jetzt.
+Um das ganze auch im Standby funktional zu machen, muß man noch in Register 4 den SLB vom VCR durchschleifen. Das habe ich noch im SMT-shutdown.sh eingebaut. Wenn man nun den Receiver in Standby schickt, dann geht der Fernseher auch an, sobald man den VCR bzw. DVD Spieler anmacht:
+
+[...]
+
+if [ ! -e /tmp/poweroff ]; then
+  echo S > /tmp/dispdata
+  touch /tmp/poweroff
+  <span style='color:red'>#Turn off TV
+  /usr/local/sbin/i2cset -y 0 0x4a 0x05 0x18  #slow blanking off, d.h. scart-schaltspannung abschalten fuer ENC
+  /usr/local/sbin/i2cset -y 0 0x4a 0x04 0xf0  #slow blanking from VCR
+  /usr/local/sbin/i2cset -y 0 0x4a 0x03 0xfb  # RGB & FB from VCR
+  /usr/local/sbin/i2cset -y 0 0x4a 0x02 0x03  # video from VCR
+  /usr/local/sbin/i2cset -y 0 0x4a 0x01 0x2a  # audio from VCR</span>
+  #stop all unneeded processes
+  for i in vdr-sxfe X mms mplayer
+  do
+    killall $i &> /dev/null
+    sleep 1
+  done
+  /etc/rc.d/rc.syslog stop
+  hdparm -S 48 /dev/hda
+  clear
+else
+  echo s > /tmp/dispdata
+  rm /tmp/poweroff
+  hdparm -S 0 /dev/hda
+  <span style='color:red'># Turn On TV
+  /usr/local/sbin/i2cset -y 0 0x4a 0x05 0x38  #slow blanking on, d.h. scart-schaltspannung einschalten
+  /usr/local/sbin/i2cset -y 0 0x4a 0x04 0x80  #slow blanking normal
+  /usr/local/sbin/i2cset -y 0 0x4a 0x03 0xf6  # RGB & FB from ENC
+  /usr/local/sbin/i2cset -y 0 0x4a 0x02 0x01  # video from ENC
+  /usr/local/sbin/i2cset -y 0 0x4a 0x01 0x11  # audio from ENC
+  </span>
+  /etc/rc.d/rc.syslog start
+  export PATH=/bin:/usr/bin:/usr/X11R6/bin:/usr/local/bin
+  /usr/X11R6/bin/xinit /etc/X11/xinit/xinitrc &> /dev/null &
+fi
+[...]
+
+
+Ich überlege, ob es noch Sinn macht mittels Register 6 die nicht benötigten Inputs und Outputs abzuschalten, also:
+CODE: ALLES AUSWÄHLEN
+i2cset -y 0 0x4a 0x06 0xbe; nur SCART TV-Out und ENC IN aktiv und 
+i2cset -y 0 0x4a 0x06 0xbd; nur SCART TV-Out und VCR IN aktiv ?
+
+
+Hat hier jemand Input? Kann man dafür sorgen, das im ausgeschalteten Zustand ebenfalls das SCART Signal durchgeschleift wird ? 
+
+Viele Grüße
+Mac
+ mac
+Newbie
+ 
+Beiträge: 6
+Registriert: 29.10.2007 20:04
+Wohnort: Rhein-Main
+Danke gegeben: 0 mal
+Danke bekommen: 0 mal
+Nach oben
+von climber » 30.10.2007 10:29
+
+Hallo mac;
+
+Danke für deine Ergänzung, hat mir gerade weitere Experimente erspart. Leider wird
+das durchschalten des VCR-SCART im ausgeschalteten Zustand nicht funktionieren, das
+Netzteil schaltet komplett ab, auch die 5V Spannung, die ( zumindest nach meinen Kenntnissen) für den Erhalt der Registerwerte notwendig wäre. Es müsste also das Netzteil modifiziert werden.
+
+Beste Grüße
+Climber
+1 x SAMSUNG SMT 7020 HD 2,5" 10GB / SLIM-DVD intern<br>1 x SAMSUNG SMT 7020 HD 3,5" 400 GB intern<br>1 x Gen2VDR2.0 VIAEPIA M II 1GHZ 512 MB DVD ENLITE-Multimedia
+ climber
+Member
+ 
+Beiträge: 19
+Registriert: 25.08.2007 09:41
+Wohnort: Hohnstein/ Ehrenberg
+Danke gegeben: 0 mal
+Danke bekommen: 2 mal
+ 
+Nach oben
+von mac » 30.10.2007 11:25
+
+Hallo Climber,
+danke für die Info. Ich hatte schon so etwas befürchtet. Auf der anderen Seite ist es ja ein ATX Netzteil (wenn auch mit gespiegelter Belegung). Haben die nicht 5V permanent ?
+Und wie bekommt man die dann an den Chip?
+Da müssten dann die Hardware-Gurus ran, ich bleib lieber bei der Software ...
+
+Was den Standby des STV (Register 6) angeht, werde ich heute mal nachmessen, ob das was bzgl. der Stromaufnahme bringt, kann es mir aber nicht wirklich vorstellen ...
+
+Gruß
+Mac
+ mac
+Newbie
+ 
+Beiträge: 6
+Registriert: 29.10.2007 20:04
+Wohnort: Rhein-Main
+Danke gegeben: 0 mal
+Danke bekommen: 0 mal
+Nach oben
+von mac » 30.10.2007 11:37
+
+Hinweis für VCR-Benutzer !!
+
+Alle die an VCR SCART einen DVD Spieler angeschlossen haben, brauchen hier nicht weiterlesen, sondern nur die, die auch einen Videorecorder an die SCART Buchse hängen möchten, um dann aus dem Fernsehen analog aufzunehmen (was ich mir allerdings nicht vorstellen kann).
+
+Hier sind die Werte für Register 1 und 2 so anzupassen, dass das Signal von ENC auf beiden SCART Buchsen rauskommt. Mit den Werten oben geht nur entweder ENC oder VCR-SCART auf TV-Scart.
+
+Vermutlich sind die Werte dann wie folgt:
+CODE: ALLES AUSWÄHLEN
+icset -y 0 0x4a 0x01 0x99 # ENC Audio auf SCART-TV und SCART-VCR
+icset -y 0 0x4a 0x02 0x11 # ENC Video auf SCART-TV und SCART-VCR
+

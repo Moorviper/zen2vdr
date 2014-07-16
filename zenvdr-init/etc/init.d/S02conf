@@ -1,0 +1,84 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+echo -n "CONF: "
+
+# Restore local configuration
+
+echo -n "updates "
+
+# Clear the config if the date has been set to 1988
+#if [ $(date +%Y) -lt 1990  ]; then
+#  echo "            The system date has been reset -> clearing config." > /dev/tty0
+#  echo "" > /dev/tty0
+#  echo "            Waiting 15 seconds. Power off hard to abort." > /dev/tty0
+#  echo "" > /dev/tty0
+#  echo "" > /dev/tty0
+#
+#  sleep 15
+#  rm -rf /tmp/config/conf/*
+#  exit 0
+#fi
+
+stty -F /dev/ttyS1 9600 cs8 raw
+timeout -t 1 cat /dev/ttyS1 > /tmp/resetkey
+
+if grep -q "<" /tmp/resetkey ; then
+  clear  > /dev/tty0
+  echo "" > /dev/tty0
+  echo "        Menu key is held down. " > /dev/tty0
+  echo "" > /dev/tty0
+  echo "        Keep holding   MENU key to reset config." > /dev/tty0
+  echo "        Press and hold UP   key to start in failsafe* mode." > /dev/tty0
+  echo "        Press and hold DOWN key to start a shell on TTY4." > /dev/tty0
+  echo "          *Failsafe mode disables all features and plugins." > /dev/tty0
+  echo "" > /dev/tty0
+  echo "        Hold for 15 seconds, or release keys to do nothing." > /dev/tty0
+  echo "" > /dev/tty0
+
+  sleep 13
+
+  timeout -t 1 cat /dev/ttyS1 > /tmp/resetkey
+
+  if grep -q "<" /tmp/resetkey ; then
+    echo "            Resetting config in 15 seconds. " > /dev/tty0
+    sleep 15
+    rm -rf /tmp/config/conf/*
+    exit 0
+  fi
+  if grep -q "8" /tmp/resetkey ; then
+    echo "            Starting in failsafe mode. " > /dev/tty0
+    touch /tmp/failsafe
+    sleep 5
+  fi
+  if grep -q "7" /tmp/resetkey ; then
+    echo "            Starting a shell on tty4. " > /dev/tty0
+    bash
+    sleep 5
+  fi
+fi
+
+for i in /tmp/config/updates/*.tgz; do
+  [ ! -e ${i} ] && continue
+  if ( echo ${i} | grep -q /plg- ); then
+    tar xzpf ${i} -C / "./etc/vdr.d"
+   echo -n "p"
+  else
+    [ ! -e /tmp/failsafe ] && tar xzpf ${i} -C /
+    echo -n "u"
+  fi
+done
+echo -n " "
+
+echo -n "base "
+
+for i in admin.conf adminbase.conf features.conf vdr.conf passwd TZ update.conf \
+         shadow shadow- group fstab asound.state; do
+  [ -e /tmp/config/conf/etc/${i} ] && cp /tmp/config/conf/etc/${i} /etc
+done
+
+[ -e /tmp/config/conf/usr/lib/locale/locale-archive.bz2 ] && bzcat /tmp/config/conf/usr/lib/locale/locale-archive.bz2 > /usr/lib/locale/locale-archive
+
+echo "OK"

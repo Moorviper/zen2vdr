@@ -1,0 +1,16 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+echo "Setting up cgroup support"
+
+mkdir /dev/cgroup
+mount -t cgroup -o cpu none /dev/cgroup
+
+mkdir -m 0777 /dev/cgroup/frontend
+mkdir -m 0777 /dev/cgroup/default
+echo 1 > /dev/cgroup/default/tasks
+
+echo 512 > /dev/cgroup/default/cpu.shares
+echo 2048 > /dev/cgroup/frontend/cpu.shares

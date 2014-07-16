@@ -1,0 +1,3 @@
+#!/bin/sh
+
+/bin/echo -e "$@\nQUIT" | nc localhost 6419

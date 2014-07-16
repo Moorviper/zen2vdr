@@ -1,0 +1,106 @@
+#!/bin/sh
+#
+# Start samba.
+#
+
+#Skip if network is not up
+[ -e /tmp/nonet ] && exit 0
+
+. /etc/adminbase.conf
+
+echo -n "Samba: "
+
+start() {
+  [ -e /tmp/config/conf/etc/samba/smb.conf ] && cp /tmp/config/conf/etc/samba/smb.conf /etc/samba
+  echo -n "Starting Samba "
+  /usr/sbin/smbd
+  echo -n "nmbd"
+  /usr/sbin/nmbd
+  
+  echo -n "Mounting Samba Shares "
+
+  if [ X${VIDEO_DEVICE} == Xnetwork -a X${VIDEO_NETMOUNT_TYPE} == Xsamba ]; then
+    RC=0
+    echo -n "samba "
+    if [ "${VIDEO_NETMOUNT_NAME}" == "" ]; then
+      mount -t smbfs -o username=${VIDEO_NETMOUNT_USER},password=${VIDEO_NETMOUNT_PASS} \
+      //${VIDEO_NETMOUNT_ADDRESS}/${VIDEO_NETMOUNT_SHARE} ${VIDEO_MOUNTPOINT}
+      RC=$?
+    else
+      mount -t smbfs -o username=${VIDEO_NETMOUNT_USER},password=${VIDEO_NETMOUNT_PASS},ip=${VIDEO_NETMOUNT_ADDRESS} \
+      //${VIDEO_NETMOUNT_NAME}/${VIDEO_NETMOUNT_SHARE} ${VIDEO_MOUNTPOINT}
+      RC=$?
+    fi
+    if [ ${RC} != 0 -a X${VIDEO_NETMOUNT_DIR} == Xstorage ]; then
+      mount -t tmpfs tmpfs /storage
+    fi
+  fi
+
+  if [ X${MEDIA_NETMOUNT_TYPE} != Xnone ]; then
+    RC=0
+    [ ! -d /storage/media ] && mkdir /storage/media
+    if [ X${MEDIA_NETMOUNT_TYPE} == Xsamba ]; then
+      echo -n "samba "
+      if [ "${MEDIA_NETMOUNT_NAME}" == "" ]; then
+        mount -t smbfs -o username=${MEDIA_NETMOUNT_USER},password=${MEDIA_NETMOUNT_PASS} \
+        //${MEDIA_NETMOUNT_ADDRESS}/${MEDIA_NETMOUNT_SHARE} /storage/media
+        RC=$?
+      else
+        mount -t smbfs -o username=${MEDIA_NETMOUNT_USER},password=${MEDIA_NETMOUNT_PASS},ip=${MEDIA_NETMOUNT_ADDRESS} \
+        //${MEDIA_NETMOUNT_NAME}/${MEDIA_NETMOUNT_SHARE} /storage/media
+        RC=$?
+      fi
+      if [ ${RC} != 0 ]; then
+        echo -n "FAILED "
+      fi
+    fi
+  fi
+
+  mount -a -t smbfs
+}
+stop() {
+  echo -n "Unmounting Samba Shares "
+  umount -a -t smbfs
+
+  echo -n "Stopping Samba "
+  killall smbd
+  killall nmbd
+  
+  mkdir -p /tmp/config/conf/etc/samba
+  cp /etc/samba/smb.conf /tmp/config/conf/etc/samba
+   
+  echo "OK"
+}
+restart() {
+  if [ -r /var/run/samba/smbd.pid ]; then
+    echo -n "listener "
+    kill `cat /var/run/samba/smhd.pid`
+    kill `cat /var/run/samba/nmbd.pid`
+  else
+    echo -n "samba "
+    killall smbd
+    killall nmbd
+  fi
+  sleep 1
+  start
+}
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+echo "OK"
+
+exit $?
+

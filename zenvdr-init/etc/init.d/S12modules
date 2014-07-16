@@ -1,0 +1,41 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+echo "Unpacking Modules"
+tar xjf /tmp/config/boot/modules.tgz -C /lib/modules
+ 
+echo -n "MODULES: "
+
+. /etc/adminbase.conf
+
+/sbin/modprobe intel-agp
+/sbin/modprobe i810fb vram=8 xres=720 yres=576 bpp=32 hsync1=26 hsync2=55 vsync1=50 vsync2=50 mtrr=1 accel=1
+/sbin/modprobe fbcon
+
+if [ "${LOAD_DVB_DRIVER}" == "1" ]; then
+  /sbin/modprobe cx88xx
+  /sbin/modprobe cx88_dvb
+fi
+
+/sbin/modprobe snd_page_alloc
+/sbin/modprobe soundcore
+/sbin/modprobe snd
+/sbin/modprobe snd_timer
+/sbin/modprobe snd_pcm
+/sbin/modprobe snd_ac97_bus
+/sbin/modprobe snd_ac97_codec
+/sbin/modprobe snd_intel8x0
+/sbin/modprobe snd_pcm_oss
+
+/sbin/modprobe snd_mixer_oss
+
+/sbin/modprobe e100
+/sbin/modprobe i2c_i801
+
+/sbin/modprobe w83627hf
+/sbin/modprobe hwmon_vid
+/sbin/modprobe hwmon
+
+echo "OK"

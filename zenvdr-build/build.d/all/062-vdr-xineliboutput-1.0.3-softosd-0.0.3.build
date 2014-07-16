@@ -1,0 +1,73 @@
+# VDR build system CORE config file
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+#
+# ----------------------------------------------------------------------------
+#
+# This file is part of the automatet vdr build and install system that
+# is used to build the core components for the zentoo-vdr components
+#
+# This script is executed from the main VDR build script when a component
+# or plugin is to be installed into the VDR build environment.
+#
+# Functions within the script are:
+#
+#  - prep(): To configure a plugin before compiling VDR or to patch VDR
+#
+#  - install(): To install a plugin or feature package or its components
+#
+#  - config(): To write a VDR config options file for this feature or package
+#
+
+echo "Conf script for xineliboutput-1.0.3-softosd.patch"
+
+# Remember where we came from
+OLD_DIR=`pwd`
+
+prep() {
+  echo "Starting prep for component: ${0}"
+
+  cd ${VDR_DIR}/PLUGINS/src/xineliboutput
+
+  patch -p1 < ${OLD_DIR}/src-files/xineliboutput-1.0.3-softosd-0.0.3.diff
+
+  cd ${OLD_DIR}
+}
+
+install() {
+  echo "Starting install for component: ${0}"
+  echo "Nothing to do."
+}
+
+config() {
+  echo "Starting config for component: ${0}"
+  echo "Nothing to do."
+}
+
+case "$1" in
+  (prep)
+    prep
+    ;;
+  (install)
+    install
+    ;;
+  (config)
+    config
+    ;;
+  *)
+    echo $"Usage: $0 {prep|install|config}"
+    exit 1
+esac
+

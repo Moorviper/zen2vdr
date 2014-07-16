@@ -1,0 +1,9 @@
+# Sample VDR configuration script
+#
+ENABLED="yes"
+RECORD_SCRIPT="/etc/vdr/smt-record-led.sh"
+STARTUP_SCRIPT=""
+PLUGIN_NAME=""
+PLUGIN_PARAMETERS=""
+SHUTDOWN_SCRIPT=""
+VDR_PARAMETERS=""

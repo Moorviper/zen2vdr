@@ -1,0 +1,85 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+# Remember if this was shutdown or reboot.
+[ -e /tmp/shutdown ] && SHUTDOWN=1
+
+. /etc/admin.conf
+
+# Start all init scripts in /etc/init.d
+# executing them in numerical order.
+#
+for i in `ls /etc/init.d/S[2-9]?* | sort -r` ;do
+
+     # Ignore dangling symlinks (if any).
+     [ ! -f "$i" ] && continue
+
+     case "$i" in
+	*.sh)
+	    # Source shell script for speed.
+	    (
+		trap - INT QUIT TSTP
+		set stop
+		. $i
+	    )
+	    ;;
+	*)
+	    # No sh extension, so fork subprocess.
+	    $i stop
+	    ;;
+    esac
+done
+
+# Make all sleeping scripts wake up
+pidof sleep > /dev/null && killall sleep
+
+# Now everything should be cleaned up
+#
+echo "Stopping syslog."
+killall syslogd
+killall klogd
+
+echo "Stopping udev."
+killall udevd
+
+echo "Saving config."
+
+[ -e /tmp/config/conf/usr/lib/locale ] || mkdir -p /tmp/config/conf/usr/lib/locale
+[ -e /tmp/config/conf/etc ] || mkdir -p /tmp/config/conf/etc
+
+echo -n "base "
+
+for i in admin.conf adminbase.conf features.conf vdr.conf passwd TZ update.conf \
+         shadow shadow- group fstab asound.state; do
+  [ -e /etc/${i} ] && cp /etc/${i} /tmp/config/conf/etc
+done
+
+# local init file
+[ -e /tmp/config/conf/etc/init.d ] || mkdir -p /tmp/config/conf/etc/init.d 
+cp /etc/init.d/S99local /tmp/config/conf/etc/init.d/S99local
+
+[ -e /usr/lib/locale/locale-archive ] && cat /usr/lib/locale/locale-archive | bzip2 > /tmp/config/conf/usr/lib/locale/locale-archive.bz2
+
+umount /dev/loop/*
+
+echo "Sync-ing."
+sync
+
+echo "Unmounting filesystems."
+umount -a -t nonfs,noproc,nosysfs
+umount -a -r -t nonfs,noproc,nosysfs
+
+[ ! -e /tmp/nonet ] && [ "${UPDATE_ROM}" == "1" ] && /etc/onlineupdate.sh noreboot poweroff
+
+mount -o remount,ro /tmp/config
+umount /storage
+
+sync
+hdparm -f /dev/hda
+
+sleep 1
+
+# Turn off SMT
+[ X${SHUTDOWN} == X1 ] && echo -e -n "\x20\x30\x20\x30\x20\x30\x01\x01" > /dev/ttyS1

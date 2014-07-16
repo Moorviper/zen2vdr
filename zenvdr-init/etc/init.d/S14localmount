@@ -1,0 +1,9 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+echo -n "LOCALMOUNT: "
+/bin/mount -a -v -t nonfs,nosmbfs,noproc
+
+echo "OK"

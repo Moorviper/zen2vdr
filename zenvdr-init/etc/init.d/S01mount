@@ -1,0 +1,81 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+# Only done when not startet via nfs
+
+dmesg | grep nfsroot || (
+
+/bin/mount -n -t proc proc /proc
+/bin/mount -n -t sysfs sys /sys
+
+echo -n "MOUNT: "
+
+echo -n "proc "
+
+if [ -d /proc/sys ]; then
+  /bin/mount -n -f proc /proc -t proc
+fi
+if [ -d /sys/bus ]; then
+  /bin/mount -n -f sysfs /sys -t sysfs
+fi
+
+echo -n "tmp "
+/bin/mount -n -t tmpfs -o noatime none /tmp
+
+echo -n "aufs "
+
+mkdir /tmp/rw
+mkdir /tmp/rw/etc
+mkdir /tmp/rw/var
+mkdir /tmp/rw/root
+mkdir /tmp/rw/usr
+mkdir /tmp/rw/lib
+mkdir /tmp/rw/bin
+mkdir /tmp/rw/sbin
+
+mkdir /tmp/config
+
+mount -n -t aufs -o br:/tmp/rw/etc:/etc none /etc
+mount -n -t aufs -o br:/tmp/rw/var:/var none /var
+mount -n -t aufs -o br:/tmp/rw/root:/root none /root
+mount -n -t aufs -o br:/tmp/rw/usr:/usr none /usr
+mount -n -t aufs -o br:/tmp/rw/lib:/lib none /lib
+mount -n -t aufs -o br:/tmp/rw/bin:/bin none /bin
+mount -n -t aufs -o br:/tmp/rw/sbin:/sbin none /sbin
+
+cat /proc/mounts > /etc/mtab
+
+echo ""
+echo -n "config "
+
+/sbin/fsck -C -a /tmp/config
+mount -n /tmp/config
+
+echo -n "shm "
+mkdir /dev/shm 
+
+echo -n "loopdevs "
+
+mkdir /dev/loop
+mknod /dev/loop/0 b 7 0 -m 660
+chown root:disk /dev/loop/0 
+mknod /dev/loop/1 b 7 1 -m 660
+chown root:disk /dev/loop/1 
+mknod /dev/loop/2 b 7 2 -m 660
+chown root:disk /dev/loop/2 
+mknod /dev/loop/3 b 7 3 -m 660
+chown root:disk /dev/loop/3 
+mknod /dev/loop/4 b 7 4 -m 660
+chown root:disk /dev/loop/4 
+mknod /dev/loop/5 b 7 5 -m 660
+chown root:disk /dev/loop/5 
+mknod /dev/loop/6 b 7 6 -m 660
+chown root:disk /dev/loop/6 
+mknod /dev/loop/7 b 7 7 -m 660
+chown root:disk /dev/loop/7
+
+echo "OK"
+
+)

@@ -1,0 +1,54 @@
+#!/bin/sh
+#
+# Start mediatomb.
+#
+
+#Skip if network is not up
+[ -e /tmp/nonet ] && exit 0
+
+echo -n "MediaTomb: "
+
+start() {
+  echo -n "Starting MediaTomb "
+  [ -e /tmp/config/conf/etc/mediatomb/config.xml ] && cp /tmp/config/conf/etc/mediatomb/config.xml /etc/mediatomb
+  [ -e /tmp/config/conf/var/lib/mediatomb/mediatomb.db ] && cp /tmp/config/conf/var/lib/mediatomb/mediatomb.db /var/lib/mediatomb
+  
+  [ -e /storage/LiveTV ] || cp -r /tmp/rom/mediatomb/storage.install/LiveTV /storage
+  
+  /usr/bin/mediatomb --daemon --pidfile /var/run/mediatomb.pid --user root --group root \
+  				--logfile /tmp/mediatomb.log --config /etc/mediatomb/config.xml --port 49152 \
+                --interface eth0
+}
+stop() {
+  echo -n "Stopping MediaTomb "
+  kill `cat /var/run/mediatomb.pid`
+  mkdir -p /tmp/config/conf/etc/mediatomb
+  mkdir -p /tmp/config/conf/var/lib/mediatomb
+  cp /etc/mediatomb/config.xml /tmp/config/conf/etc/mediatomb
+  cp /var/lib/mediatomb/mediatomb.db /tmp/config/conf/var/lib/mediatomb
+}
+restart() {
+  stop
+  sleep 1
+  start
+}
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+echo "OK"
+
+exit $?
+

@@ -1,0 +1,57 @@
+#! /bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+# based on:
+# Version:	@(#)urandom  1.33  22-Jun-1998  miquels@cistron.nl
+#
+
+echo -n "URANDOM: "
+
+[ -c /dev/urandom ] || exit 0
+#. /etc/default/rcS
+
+case "$1" in
+	start|"")
+		if [ "$VERBOSE" != no ]
+		then
+			echo -n "init "
+		fi
+		# Load and then save 512 bytes,
+		# which is the size of the entropy pool
+		if [ -f /etc/random-seed ]
+		then
+			cat /etc/random-seed >/dev/urandom
+		fi
+		# check for read only file system
+		if ! touch /etc/random-seed 2>/dev/null
+		then
+		    echo
+			echo "read-only file system detected...done"
+			exit
+		fi
+		rm -f /etc/random-seed
+		umask 077
+		dd if=/dev/urandom of=/etc/random-seed count=1 \
+			>/dev/null 2>&1 || echo "urandom start: failed."
+		umask 022
+		[ "$VERBOSE" != no ] && echo "OK"
+		;;
+	stop)
+		if ! touch /etc/random-seed 2>/dev/null
+                then
+                        exit
+                fi
+		# Carry a random seed from shut-down to start-up;
+		# see documentation in linux/drivers/char/random.c
+		[ "$VERBOSE" != no ] && echo -n "save "
+		umask 077
+		dd if=/dev/urandom of=/etc/random-seed count=1 \
+			>/dev/null 2>&1 || echo "urandom stop: failed."
+		[ "$VERBOSE" != no ] && echo "OK"
+		;;
+	*)
+		echo "Usage: urandom {start|stop}" >&2
+		exit 1
+		;;
+esac

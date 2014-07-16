@@ -1,0 +1,7 @@
+mode "720x576"
+  # PCLK: 26.57 MHz, H: 29.65 kHz, V: 50.00 Hz
+  geometry 720 576 720 576 32
+  timings 37641 88 24 13 1 64 3
+  hsync low
+  vsync high
+endmode

@@ -1,0 +1,23 @@
+PACKAGE="strace"
+echo "Building addon:"${PACKAGE}
+[ ! -e /zensysgen-glibc-${PACKAGE} ] && mkdir /zensysgen-glibc-${PACKAGE}
+rm -rf /zensysgen-glibc-${PACKAGE}/var
+mkdir  /zensysgen-glibc-${PACKAGE}/var
+cp -rp /zensysgen-glibc/var/db /zensysgen-glibc-${PACKAGE}/var
+mkdir  /zensysgen-glibc-${PACKAGE}/var/cache
+cp -rp /zensysgen-glibc/var/cache/edb /zensysgen-glibc-${PACKAGE}/var/cache
+
+ROOT="/zensysgen-glibc-"${PACKAGE} \
+USE="minimal make-symlinks -python -berkdb -db -openmp -gpm -ipv6 -pam -X iconv mmx sse" \
+MAKEOPTS="-j2" \
+INSTALL_MASK="*.h *.a *.o /usr/include /usr/man /usr/share/man /usr/share/doc /usr/share/info /usr/share/locale /etc/conf.d /etc/init.d" \
+emerge nfs-utils -v
+
+if [ ! X$? == X0 ]; then
+  echo "Error ?"
+  read 
+fi
+rm -rf /zensysgen-glibc-${PACKAGE}/var/db
+rm -rf /zensysgen-glibc-${PACKAGE}/var/cache/edb
+rm -rf /zensysgen-glibc-${PACKAGE}/var/lib/portage
+rm -rf /zensysgen-glibc-${PACKAGE}/etc/ld.so.*

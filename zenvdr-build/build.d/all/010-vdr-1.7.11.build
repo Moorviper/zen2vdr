@@ -1,0 +1,124 @@
+# VDR build system CORE config file
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+#
+# ----------------------------------------------------------------------------
+#
+# This file is part of the automatet vdr build and install system that
+# is used to build the core components for the zentoo-vdr components
+#
+# This script is executed from the main VDR build script when a component
+# or plugin is to be installed into the VDR build environment.
+#
+# Functions within the script are:
+#
+#  - prep(): To configure a plugin before compiling VDR or to patch VDR
+#
+#  - install(): To install a plugin or feature package or its components
+#
+#  - config(): To write a VDR config options file for this feature or package
+#
+
+PACKAGE_NAME="vdr"
+PACKAGE_VER="1.7.11"
+
+# Remember where we came from
+OLD_DIR=`pwd`
+
+prep() {
+  echo "Starting prep for ${PACKAGE_NAME}-$PACKAGE_VER"
+
+  if [ ! -e ${DL_DIR}/${PACKAGE_NAME}-${PACKAGE_VER}.tar.bz2 ]; then
+    wget ftp://ftp.tvdr.de/vdr/Developer/vdr-${PACKAGE_VER}.tar.bz2 -P ${DL_DIR}
+    if [ ! $RC == 0 ]; then
+      echo FAILED;
+      exit 1
+    fi
+  fi
+
+  echo "Extracting into: ${OLD_DIR}/vdr-${PACKAGE_VER}"
+  tar xjf ${DL_DIR}/${PACKAGE_NAME}-${PACKAGE_VER}.tar.bz2
+  cd vdr-${PACKAGE_VER}
+
+  if [ -e ../src-files/vdr-make-${PACKAGE_VER}.config ]; then
+    echo "Using supplied Make.config"
+    cp ../src-files/vdr-make-${PACKAGE_VER}.config Make.config
+  fi
+
+  VDR_DIR=`pwd`
+
+  cd ${OLD_DIR}
+}
+
+install() {
+  echo "Starting install for ${PACKAGE_NAME}-$PACKAGE_VER"
+
+  cd ${VDR_DIR}
+
+  if [ X${TARGET_DIR} == X ]; then
+    make install
+  else
+    mkdir -p ${TARGET_DIR}/usr/local/bin
+    /usr/bin/install vdr ${TARGET_DIR}/usr/local/bin/vdr
+    mkdir -p ${TARGET_DIR}/etc/vdr/plugins
+    mkdir -p ${TARGET_DIR}/etc/vdr/themes
+    cd locale
+    mkdir -p ${TARGET_DIR}/usr/local/share/locale
+    cp -r --parents * ${TARGET_DIR}/usr/local/share/locale
+    cd ..
+  fi
+
+  if [ ! -e ${TARGET_DIR}/usr/local/lib/vdr ]; then                          
+    mkdir -p ${TARGET_DIR}/usr/local/lib/vdr                                    
+  fi 
+
+  if [ ! -e ${TARGET_DIR}/etc/vdr.d/all ]; then           
+    mkdir -p ${TARGET_DIR}/etc/vdr.d/all
+  fi                                                            
+                                                           
+  VDR_DIR=`pwd`
+
+  #unbötigte Plugins löschen
+  rm -r PLUGINS/src/hello
+  rm -r PLUGINS/src/osddemo
+  rm -r PLUGINS/src/servicedemo
+  rm -r PLUGINS/src/sky
+  rm -r PLUGINS/src/status
+  rm -r PLUGINS/src/svdrpdemo
+  rm -r PLUGINS/src/pictures
+
+  cd ${OLD_DIR}
+}
+
+config() {
+  echo "Starting config for ${PACKAGE_NAME}-$PACKAGE_VER"
+  echo "Nothing to do."
+}
+
+case "$1" in
+  (prep)
+    prep
+    ;;
+  (install)
+    install
+    ;;
+  (config)
+    config
+    ;;
+  *)
+    echo $"Usage: $0 {prep|install|config}"
+    exit 1
+esac
+

@@ -1,0 +1,63 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+# Start all init scripts in /etc/init.d
+# executing them in numerical order.
+#
+
+clear > /dev/tty0
+echo > /dev/tty0
+echo > /dev/tty0
+
+for i in /etc/init.d/S0?* ;do
+
+     # Ignore dangling symlinks (if any).
+     [ ! -f "$i" ] && continue
+
+     case "$i" in
+	*.sh)
+	    # Source shell script for speed.
+	    (
+		trap - INT QUIT TSTP
+		set start
+		. $i
+	    )
+	    ;;
+	*)
+	    # No sh extension, so fork subprocess.
+	    $i start
+	    ;;
+    esac
+done
+
+# Start the flash-updater if asked
+[ -e /tmp/config/flashupdate ] && exec /etc/init.d/rcFLASH
+
+clear > /dev/tty0
+echo > /dev/tty0
+echo > /dev/tty0
+echo "          Welcome to zentoo linux, zen2vdr is starting up ...." > /dev/tty0
+
+# Read the files again, there might be more now.
+for i in /etc/init.d/S[1-9]?* ;do
+
+     # Ignore dangling symlinks (if any).
+     [ ! -f "$i" ] && continue
+
+     case "$i" in
+	*.sh)
+	    # Source shell script for speed.
+	    (
+		trap - INT QUIT TSTP
+		set start
+		. $i
+	    )
+	    ;;
+	*)
+	    # No sh extension, so fork subprocess.
+	    $i start
+	    ;;
+    esac
+done

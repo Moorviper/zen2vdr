@@ -1,0 +1,108 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+#Skip if network is not up
+[ -e /tmp/nonet ] && exit 0
+
+. /etc/adminbase.conf
+
+echo -n "Netmount: "
+
+start() {
+  # Mount the network storage share, if it fails fallback to a tmpfs so VDR can still start.
+  if [ X${VIDEO_DEVICE} == Xnetwork -o X${VIDEO_NETMOUNT_DIR} == Xvideo ]; then
+    VIDEO_MOUNTPOINT="/storage"
+    if [ X${VIDEO_NETMOUNT_DIR} == Xvideo ]; then
+      VIDEO_MOUNTPOINT="/storage/video"
+      mount -t tmpfs none /storage
+      mkdir /storage/video
+    fi
+    
+    # We can attempt to mount a cifs network share at this point
+    if [ X${VIDEO_NETMOUNT_TYPE} == Xcifs ]; then
+      echo -n "CIFS "
+      if [ "${VIDEO_NETMOUNT_NAME}" == "" ]; then
+        mount -t cifs -o user=${VIDEO_NETMOUNT_USER},pass=${VIDEO_NETMOUNT_PASS} \
+        //${VIDEO_NETMOUNT_ADDRESS}/${VIDEO_NETMOUNT_SHARE} ${VIDEO_MOUNTPOINT}
+        RC=$?
+      else
+        mount -t cifs -o user=${VIDEO_NETMOUNT_USER},pass=${VIDEO_NETMOUNT_PASS},ip=${VIDEO_NETMOUNT_ADDRESS} \
+        //${VIDEO_NETMOUNT_NAME}/${VIDEO_NETMOUNT_SHARE} ${VIDEO_MOUNTPOINT}
+        RC=$?
+      fi
+      if [ ${RC} != 0 -a X${VIDEO_NETMOUNT_DIR} == Xstorage ]; then
+        mount -t tmpfs tmpfs /storage
+      fi
+    fi
+  
+    # We can attempt to mount a nfs network share at this point
+    if [ X${VIDEO_NETMOUNT_TYPE} == Xnfs ]; then
+      echo -n "NFS "
+      mount -t nfs -o rsize=2048,wsize=2048 ${VIDEO_NETMOUNT_ADDRESS}:/${VIDEO_NETMOUNT_SHARE} ${VIDEO_MOUNTPOINT}
+      RC=$?
+      if [ ${RC} != 0 -a X${VIDEO_NETMOUNT_DIR} == Xstorage ]; then
+        echo -n "FAILED "
+        mount -t tmpfs tmpfs /storage
+      fi
+    fi
+  fi
+  
+  if [ X${MEDIA_NETMOUNT_TYPE} != Xnone ]; then
+    [ ! -d /storage/media ] && mkdir /storage/media
+    if [ X${MEDIA_NETMOUNT_TYPE} == Xcifs ]; then
+      echo -n "CIFS "
+      if [ "${MEDIA_NETMOUNT_NAME}" == "" ]; then
+        mount -t cifs -o user=${MEDIA_NETMOUNT_USER},pass=${MEDIA_NETMOUNT_PASS} \
+        //${MEDIA_NETMOUNT_ADDRESS}/${MEDIA_NETMOUNT_SHARE} /storage/media
+        RC=$?
+      else
+        mount -t cifs -o user=${MEDIA_NETMOUNT_USER},pass=${MEDIA_NETMOUNT_PASS},ip=${MEDIA_NETMOUNT_ADDRESS} \
+        //${MEDIA_NETMOUNT_NAME}/${MEDIA_NETMOUNT_SHARE} /storage/media
+        RC=$?
+      fi
+    fi
+    if [ X${MEDIA_NETMOUNT_TYPE} == Xnfs ]; then
+      echo -n "NFS "
+      mount -t nfs -o rsize=2048,wsize=2048 ${MEDIA_NETMOUNT_ADDRESS}:/${MEDIA_NETMOUNT_SHARE} /storage/media
+      RC=$?
+    fi
+
+    if [ ${RC} != 0 ]; then
+      echo -n "FAILED "
+    fi
+  fi
+  
+  echo -n "fstab "
+  mount -a -t cifs
+  mount -a -t nfs
+}
+stop() {
+  echo -n "mttab "
+  umount -a -t cifs
+  umount -a -t nfs
+}
+restart() {
+	stop
+	start
+}
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+echo "OK"
+
+exit $?

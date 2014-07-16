@@ -1,0 +1,14 @@
+# default ram disk as root
+
+/dev/hda1		/tmp/config		ext2	defaults,noatime	0 0
+
+# /storage must not be there ( it is handled by init )
+#none		/storage			tmpfs		defaults		0 0
+
+# glibc 2.2 and above expects tmpfs to be mounted at /dev/shm for
+# POSIX shared memory (shm_open, shm_unlink). 
+# (tmpfs is a dynamically expandable/shrinkable ramdisk, and will
+#  use almost no memory if not populated with files)
+# Adding the following line to /etc/fstab should take care of this:
+
+none		/dev/shm        tmpfs		defaults			0 0

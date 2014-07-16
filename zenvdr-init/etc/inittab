@@ -1,0 +1,39 @@
+# /etc/inittab
+## zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2007-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+#
+#               inittab for zentoo
+#
+# Note: BusyBox init doesn't support runlevels.  The runlevels field is
+# completely ignored by BusyBox init. If you want runlevels, use
+# sysvinit.
+#
+# Format for each entry: <id>:<runlevels>:<action>:<process>
+#
+# id        == tty to run on, or empty for /dev/console
+# runlevels == ignored
+# action    == one of sysinit, respawn, askfirst, wait, and once
+# process   == program to run
+
+# Startup the system
+# run any rc scripts
+::sysinit:/etc/init.d/rcS
+
+# Set up a couple of getty's
+tty2::respawn:/sbin/getty 38400 tty2
+tty3::respawn:/sbin/getty 38400 tty3
+
+# Logging junk
+null::sysinit:/bin/touch /var/log/messages
+null::respawn:/sbin/syslogd -n -m 0
+null::respawn:/sbin/klogd -n
+null::respawn:/etc/vdr/frontend.sh
+
+# Stuff to do for the 3-finger salute
+::ctrlaltdel:touch /tmp/reboot
+::ctrlaltdel:/sbin/reboot
+
+# Stuff to do before rebooting
+::shutdown:/etc/init.d/rc0
+

@@ -1,0 +1,309 @@
+diff -ur xineliboutput-1.0.3-orig/config.c xineliboutput-1.0.3/config.c
+--- xineliboutput-1.0.3-orig/config.c	2008-12-01 22:05:10.000000000 +0100
++++ xineliboutput-1.0.3/config.c	2008-12-02 20:39:52.000000000 +0100
+@@ -471,6 +471,12 @@
+   strn0cpy(spu_lang[3], "" ,   sizeof(spu_lang[3]));
+ #endif
+   extsub_size = -1;
++// SOFTOSD -->
++  softosd_fadein_steps = 8;
++  softosd_fadein_rate = 25;
++  softosd_fadeout_steps = 8;
++  softosd_fadeout_rate = 25;
++//<-- SOFTOSD
+ 
+   alpha_correction     = 0;
+   alpha_correction_abs = 0;
+@@ -713,6 +719,12 @@
+   else if (!strcasecmp(Name, "OSD.SpuLang3")) STRN0CPY(spu_lang[3], Value);
+ #endif
+   else if (!strcasecmp(Name, "OSD.ExtSubSize"))    extsub_size = atoi(Value);
++// SOFTOSD -->
++  else if (!strcasecmp(Name, "OSD.SoftOSD.FadeInSteps"))       softosd_fadein_steps = atoi(Value);
++  else if (!strcasecmp(Name, "OSD.SoftOSD.FadeInRate"))       softosd_fadein_rate = atoi(Value);
++  else if (!strcasecmp(Name, "OSD.SoftOSD.FadeOutSteps"))      softosd_fadeout_steps = atoi(Value);
++  else if (!strcasecmp(Name, "OSD.SoftOSD.FadeOutRate"))      softosd_fadeout_rate = atoi(Value);
++//<-- SOFTOSD
+ 
+   else if (!strcasecmp(Name, "RemoteMode"))          remote_mode = atoi(Value);
+   else if (!strcasecmp(Name, "Remote.ListenPort"))   listen_port = atoi(Value);
+diff -ur xineliboutput-1.0.3-orig/config.h xineliboutput-1.0.3/config.h
+--- xineliboutput-1.0.3-orig/config.h	2008-12-01 22:05:10.000000000 +0100
++++ xineliboutput-1.0.3/config.h	2008-12-02 20:40:11.000000000 +0100
+@@ -256,6 +256,12 @@
+     int  alpha_correction;
+     int  alpha_correction_abs;
+     int  extsub_size; /* size of separate subtitles ( -1 = xine default ; 0...6 = { tiny  small  normal  large  very large  huge } */
++// SOFTOSD -->
++	int softosd_fadein_steps;
++	int softosd_fadein_rate;
++	int softosd_fadeout_steps;
++	int softosd_fadeout_rate;
++//<-- SOFTOSD
+ 
+     // Media player
+ #if VDRVERSNUM < 10515
+diff -ur xineliboutput-1.0.3-orig/osd.c xineliboutput-1.0.3/osd.c
+--- xineliboutput-1.0.3-orig/osd.c	2008-12-01 22:05:10.000000000 +0100
++++ xineliboutput-1.0.3/osd.c	2008-12-02 22:47:21.000000000 +0100
+@@ -23,6 +23,12 @@
+ 
+ #define LOGOSD(x...)
+ 
++#define SOFTOSD_ON						(xc.softosd_fadein_steps>1 ||	xc.softosd_fadeout_steps>1) 
++#define SOFTOSD_FADEIN_STEPS			xc.softosd_fadein_steps		/* Steps <=1 schaltet Fading aus */
++#define SOFTOSD_FADEIN_RATE			xc.softosd_fadein_rate		/* in Hz */
++#define SOFTOSD_FADEOUT_STEPS			xc.softosd_fadeout_steps	/* Steps <=1 schaltet Fading aus */
++#define SOFTOSD_FADEOUT_RATE			xc.softosd_fadeout_rate		/* in Hz */
++
+ //
+ // tools
+ //
+@@ -138,6 +144,10 @@
+ 		osd_rect_t *DirtyArea);
+     void CmdClose(int Wnd);
+ 
++// SOFTOSD -->
++	int fade;
++	int fading;
++//<-- SOFTOSD
+   protected:
+     static cMutex             m_Lock;
+     static cList<cXinelibOsd> m_OsdStack;
+@@ -254,6 +264,10 @@
+ {
+   TRACEF("cXinelibOsd::cXinelibOsd");
+ 
++// SOFTOSD -->
++	fade = fading = 0;
++//<-- SOFTOSD
++
+   m_Device = Device;
+   m_Refresh = false;
+   m_IsVisible = true;
+@@ -266,7 +280,9 @@
+ 
+   cMutexLock ml(&m_Lock);
+ 
+-  CloseWindows();
++// SOFTOSD -->
++	Hide();
++//<-- SOFTOSD
+ 
+   m_OsdStack.Del(this,false);
+ 
+@@ -325,22 +341,79 @@
+   if(!m_IsVisible) 
+     return;
+ 
++// SOFTOSD -->
++	if(SOFTOSD_ON && SOFTOSD_FADEIN_STEPS>1 && (Bitmap=GetBitmap(0)))
++	{
++		int x1 = 0, y1 = 0, x2 = 0, y2 = 0;
++		int NumColors;
++		if (fade == 0 && (m_Refresh || Bitmap->Dirty(x1, y1, x2, y2)) && Bitmap->Colors(NumColors))
++		{
++			for(fade=1; fade<=SOFTOSD_FADEIN_STEPS; fade++)
++			{
++				int64_t flush_start = cTimeMs::Now();
++				Flush();
++				fading = 1; /* beim ersten Mal tuts noch weh ... */
++				int flush_time	= cTimeMs::Now()-flush_start;
++				dsyslog("SOFTOSD: FadeIn Step %d from %d FlushTime = %d ms", fade, SOFTOSD_FADEIN_STEPS, flush_time);
++				int wait_time	= 1000/SOFTOSD_FADEIN_RATE;
++				int old_fade = fade;
++				if(fade>1) /*beim ersten Mal kanns lange dauern-nicht springen */
++				{
++					while(flush_time>wait_time && fade<(SOFTOSD_FADEIN_STEPS-1))
++					{
++						fade++;
++						flush_time -= wait_time;
++					}
++				}
++				if(fade != old_fade)
++					dsyslog("SOFTOSD: FadeIn Skip %d steps", fade-old_fade);
++				if(fade == SOFTOSD_FADEIN_STEPS) /* letzter Step -> nicht mehr warten */
++					break;
++				cCondWait::SleepMs(wait_time-flush_time);
++			}
++			fading = 0;
++			return;
++		}
++	}
++//<-- SOFTOSD
+   int SendDone = 0;
+   for (int i = 0; (Bitmap = GetBitmap(i)) != NULL; i++) {
+     int x1 = 0, y1 = 0, x2 = Bitmap->Width()-1, y2 = Bitmap->Height()-1;
+-    if (m_Refresh || Bitmap->Dirty(x1, y1, x2, y2)) {
++// SOFTOSD -->
++    if (m_Refresh || Bitmap->Dirty(x1, y1, x2, y2) || fading) {
++//<-- SOFTOSD
+ 
+       /* XXX what if only palette has been changed ? */
+       int NumColors;
+       const tColor *Colors = Bitmap->Colors(NumColors);
+       if (Colors) {
+ 	osd_rect_t DirtyArea = {x1:x1, y1:y1, x2:x2, y2:y2};
++// SOFTOSD -->
++		int steps = fading < 0 ? SOFTOSD_FADEOUT_STEPS : SOFTOSD_FADEIN_STEPS;
++		if(SOFTOSD_ON && 0<fade && fade<steps)
++		{
++			tColor colors[NumColors];
++			for(int cc=0; cc<NumColors; cc++)
++				colors[cc] = (((((Colors[cc]>>24) & 0x000000FF) * fade)/steps) << 24) | (Colors[cc] & 0x00FFFFFF);
++	CmdRle(i,
++	       Left() + Bitmap->X0(), Top() + Bitmap->Y0(),
++	       Bitmap->Width(), Bitmap->Height(),
++	       (unsigned char *)Bitmap->Data(0,0),
++	       NumColors, (unsigned int *)colors,
++	       &DirtyArea);
++	     }
++	     else
++	     {
++//<-- SOFTOSD
+ 	CmdRle(i,
+ 	       Left() + Bitmap->X0(), Top() + Bitmap->Y0(),
+ 	       Bitmap->Width(), Bitmap->Height(),
+ 	       (unsigned char *)Bitmap->Data(0,0),
+ 	       NumColors, (unsigned int *)Colors,
+ 	       &DirtyArea);
++// SOFTOSD -->
++	   	}
++//<-- SOFTOSD
+ 	SendDone++;
+       }
+     }
+@@ -404,6 +477,33 @@
+ 
+   cMutexLock ml(&m_Lock);
+ 
++// SOFTOSD -->
++	if(SOFTOSD_ON && SOFTOSD_FADEOUT_STEPS>1)
++	{
++		fading = -1;
++		for(fade=SOFTOSD_FADEOUT_STEPS-1; fade>0; fade--)
++		{
++			int64_t flush_start = cTimeMs::Now();
++			Flush();
++			int flush_time	= cTimeMs::Now()-flush_start;
++			dsyslog("SOFTOSD: FadeOut Step %d from %d FlushTime = %d ms", SOFTOSD_FADEOUT_STEPS-fade, SOFTOSD_FADEOUT_STEPS, flush_time);
++			int wait_time	= 1000/SOFTOSD_FADEOUT_RATE;
++			int old_fade = fade;
++			while(flush_time>wait_time && fade>1)
++			{
++				fade--;
++				flush_time -= wait_time;
++			}
++			if(fade != old_fade)
++				dsyslog("SOFTOSD: FadeOut Skip %d steps", old_fade-fade);
++			cCondWait::SleepMs(wait_time-flush_time);
++		}
++		dsyslog("SOFTOSD: FadeOut Step %d from %d", SOFTOSD_FADEOUT_STEPS, SOFTOSD_FADEOUT_STEPS);
++		fading = 0;
++	}
++	fade = 0;
++//<-- SOFTOSD
++
+   CloseWindows();
+   m_IsVisible = false;
+ }
+diff -ur xineliboutput-1.0.3-orig/setup_menu.c xineliboutput-1.0.3/setup_menu.c
+--- xineliboutput-1.0.3-orig/setup_menu.c	2008-12-01 22:05:10.000000000 +0100
++++ xineliboutput-1.0.3/setup_menu.c	2008-12-02 20:59:19.000000000 +0100
+@@ -853,6 +853,10 @@
+ #if VDRVERSNUM < 10515
+     cOsdItem *ctrl_spulang0;
+ #endif
++// SOFTOSD -->
++	cOsdItem *ctrl_fade_in_rate;
++	cOsdItem *ctrl_fade_out_rate;
++//<-- SOFTOSD
+ 
+   protected:
+     virtual void Store(void);
+@@ -880,6 +884,33 @@
+   xc.alpha_correction = orig_alpha_correction;
+   xc.alpha_correction_abs = orig_alpha_correction_abs;
+ }
++// SOFTOSD -->
++class cMenuEditSoftOsdFadeStepsItem : public cMenuEditIntItem 
++{
++  private:
++  	int *rate;
++  protected:
++    virtual void Set(void)
++    {
++		if (minString && *value == min)
++		 SetValue(minString);
++		else if (maxString && *value == max)
++		 SetValue(maxString);
++		else
++		 SetValue(cString::sprintf("%d ms", ((*value-1)*1000)/(*rate)));
++	 }
++
++  public:
++    cMenuEditSoftOsdFadeStepsItem(const char *Name, int *Steps, int *Rate, 
++			  int Min = 0, int Max = INT_MAX, const char *MinString=NULL, const char *MaxString=NULL) :
++         cMenuEditIntItem(Name, Steps, Min, Max, MinString, MaxString)
++	{
++		value = Steps;
++		rate = Rate;
++		Set();
++	}
++};
++//<-- SOFTOSD
+ 
+ void cMenuSetupOSD::Set(void)
+ { 
+@@ -895,6 +926,10 @@
+ #if VDRVERSNUM < 10515
+   ctrl_spulang0 = NULL;
+ #endif
++// SOFTOSD -->
++	ctrl_fade_in_rate = NULL;
++	ctrl_fade_out_rate = NULL;
++//<-- SOFTOSD
+ 
+   Add(NewTitle(tr("On-Screen Display")));
+   Add(new cMenuEditBoolItem(tr("Hide main menu"), 
+@@ -950,6 +985,15 @@
+ 
+   Add(new cMenuEditStraI18nItem(tr("External subtitle size"),
+ 				&newconfig.extsub_size, SUBTITLESIZE_count, xc.s_subtitleSizes));
++// SOFTOSD -->
++  Add(NewTitle(tr("Soft-OSD")));
++  Add(new cMenuEditSoftOsdFadeStepsItem(tr("Fade-In Time"), &newconfig.softosd_fadein_steps, &newconfig.softosd_fadein_rate, 1, 32, tr("Off")));
++  Add(ctrl_fade_in_rate =
++  		new cMenuEditTypedIntItem(tr("Fade-In Rate"), tr("Hz"), &newconfig.softosd_fadein_rate, 10, 60));
++  Add(new cMenuEditSoftOsdFadeStepsItem(tr("Fade-Out Time"), &newconfig.softosd_fadeout_steps, &newconfig.softosd_fadeout_rate, 1, 32, tr("Off")));
++  Add(ctrl_fade_out_rate =
++  		new cMenuEditTypedIntItem(tr("Fade-Out Rate"), tr("Hz"), &newconfig.softosd_fadeout_rate, 10, 60));
++//<-- SOFTOSD
+ 
+   if(current<1) current=1; /* first item is not selectable */
+   SetCurrent(Get(current));
+@@ -985,6 +1029,10 @@
+   if(!newconfig.spu_autoshow && ctrl_spulang0)
+     Set();
+ #endif
++// SOFTOSD -->
++	if(item == ctrl_fade_in_rate || item == ctrl_fade_out_rate)
++		Set();
++//<-- SOFTOSD
+   return state;
+ }
+ 
+@@ -1016,7 +1064,13 @@
+   SetupStore("OSD.AlphaCorrection", xc.alpha_correction);
+   SetupStore("OSD.AlphaCorrectionAbs", xc.alpha_correction_abs);
+ 
++// SOFTOSD -->
+   SetupStore("OSD.ExtSubSize", xc.extsub_size);
++  SetupStore("OSD.SoftOSD.FadeInSteps", xc.softosd_fadein_steps);
++  SetupStore("OSD.SoftOSD.FadeInRate", xc.softosd_fadein_rate);
++  SetupStore("OSD.SoftOSD.FadeOutSteps", xc.softosd_fadeout_steps);
++  SetupStore("OSD.SoftOSD.FadeOutRate", xc.softosd_fadeout_rate);
++//<-- SOFTOSD
+ #if VDRVERSNUM < 10515
+   SetupStore("OSD.SpuAutoSelect", xc.spu_autoshow);
+   SetupStore("OSD.SpuLang0", xc.spu_lang[0]);

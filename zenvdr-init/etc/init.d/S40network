@@ -1,0 +1,65 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+echo -n "NETWORK: "
+
+start() {
+ 	# Set hostname
+ 	echo -n "hostname "
+ 	[ "${IP_HOSTNAME}" != "" ] && ${IP_HOSTNAME} > /etc/hostname
+ 	/bin/hostname -F /etc/hostname
+ 	# Bring up loopback
+ 	echo -n " loopback "
+ 	/sbin/ifconfig lo 127.0.0.1
+ 	/sbin/route add -net 127.0.0.0 netmask 255.0.0.0 lo
+
+	. /etc/admin.conf
+
+	if [ X${IP_METHOD} == Xdhcp ]; then
+	  # Run DHCP
+	  echo -n "dhcp "
+	  /sbin/dhcpcd -t 10 eth0 
+	  RC=$?
+	fi
+	
+	if [ X${IP_METHOD} == Xfixed ]; then
+	  echo -n "ifconfig "
+	  ifconfig eth0 ${IP_ADDRESS} netmask ${IP_NETMASK}
+	  RC=$?
+	  echo nameserver ${IP_NAMESERVER} > /etc/resolv.conf
+	  route add default gw ${IP_GATEWAY}
+	fi
+	
+	[ "${RC}" != "0" -o "${IP_METHOD}" == "none" ] && ( touch /tmp/nonet ; exit 1 )
+	
+}	
+stop() {
+	echo -n "dhcp "
+	killall dhcpcd
+}
+restart() {
+	stop
+	start
+}	
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+echo "OK"
+
+exit $?
+

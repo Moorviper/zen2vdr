@@ -1,0 +1,16 @@
+--- menu.c.original	2011-04-05 00:34:00.000000000 +0200
++++ menu.c	2011-04-05 00:34:36.000000000 +0200
+@@ -4527,11 +4527,11 @@
+   Skins.Message(mtStatus, tr("Pausing live video..."));
+   cReplayControl::SetRecording(NULL, NULL); // make sure the new cRecordControl will set cReplayControl::LastReplayed()
+   if (Start(NULL, true)) {
+-     sleep(2); // allow recorded file to fill up enough to start replaying
++     sleep(6); // allow recorded file to fill up enough to start replaying
+      cReplayControl *rc = new cReplayControl;
+      cControl::Launch(rc);
+      cControl::Attach();
+-     sleep(1); // allow device to replay some frames, so we have a picture
++     sleep(2); // allow device to replay some frames, so we have a picture
+      Skins.Message(mtStatus, NULL);
+      rc->ProcessKey(kPause); // pause, allowing replay mode display
+      return true;

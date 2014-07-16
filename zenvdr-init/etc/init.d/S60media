@@ -1,0 +1,40 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+echo -n "MEDIA: "
+
+start() {
+echo -n "mixer "
+/usr/sbin/alsactl restore
+}
+
+stop() {
+echo -n "mixer "
+/usr/sbin/alsactl store
+}
+
+restart() {
+echo "mixer "
+/usr/sbin/alsactl store
+}
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+echo "OK"
+
+exit $?

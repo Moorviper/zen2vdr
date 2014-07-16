@@ -1,0 +1,23 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+echo -n "PREP: "
+echo -n "ldconfig "
+ldconfig
+
+echo -n "devpts "
+mkdir /dev/pts 
+mount devpts /dev/pts -t devpts -ogid=5,mode=620 
+
+echo -n "cron "
+crond -S 2> /dev/null > /dev/null
+
+# Workaround that other gentoo scripts need
+touch /etc/init.d/functions.sh 
+
+echo -n "locale "
+[ -e /usr/lib/locale/locale-archive ] || locale-gen --quiet
+
+echo "OK"

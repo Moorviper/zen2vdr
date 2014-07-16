@@ -1,0 +1,53 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+#Skip if network is not up
+[ -e /tmp/nonet ] && exit 0
+
+#Skip if NFS Server is unselected
+. /etc/admin.conf
+[ "${SV_NFSD}" == "0" ] && exit 0
+
+echo -n "NFSD: "
+
+start() {
+  [ -e /tmp/config/conf/etc/exports ] && cp /tmp/config/conf/etc/exports /etc
+  echo -n "Starting nfsd "
+  /usr/sbin/exportfs -r
+  /usr/sbin/rpc.mountd
+  /usr/sbin/rpc.nfsd
+}
+stop() {
+  echo -n "Stopping nfsd "
+  /usr/sbin/exportfs -ua
+  killall rpc.nfsd
+  killall rcp.mountd
+
+  mkdir -p /tmp/config/conf/etc
+  cp /etc/exports /tmp/config/conf/etc
+}
+restart() {
+  /usr/sbin/exportfs -r
+}
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+echo "OK"
+
+exit $?
+

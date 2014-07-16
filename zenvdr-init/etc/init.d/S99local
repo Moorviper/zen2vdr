@@ -1,0 +1,36 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+# Put your own setup here
+# This file is saved, so whatever you put here, it's not lost
+# as long as you do a 'clean' re-boot
+
+start() {
+ echo S99local start
+}
+
+stop() {
+ echo S99local stop
+}
+
+restart() {
+ echo S99local restart
+}
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+

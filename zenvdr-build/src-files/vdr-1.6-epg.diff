@@ -1,0 +1,32 @@
+diff -urp vdr-1.6.0.orig/eit.c vdr-1.6.0/eit.c
+--- vdr-1.6.0.orig/eit.c	2007-08-26 10:56:33 +0000
++++ vdr-1.6.0/eit.c	2008-03-29 16:37:46 +0000
+@@ -14,6 +14,7 @@
+ #include "eit.h"
+ #include "epg.h"
+ #include "i18n.h"
++#include <time.h>
+ #include "libsi/section.h"
+ #include "libsi/descriptor.h"
+ 
+@@ -47,7 +48,7 @@ cEIT::cEIT(cSchedules *Schedules, int So
+   for (SI::Loop::Iterator it; eventLoop.getNext(SiEitEvent, it); ) {
+       bool ExternalData = false;
+       // Drop bogus events - but keep NVOD reference events, where all bits of the start time field are set to 1, resulting in a negative number.
+-      if (SiEitEvent.getStartTime() == 0 || SiEitEvent.getStartTime() > 0 && SiEitEvent.getDuration() == 0)
++      if (SiEitEvent.getStartTime() == 0 || (SiEitEvent.getStartTime() - time(NULL)) > (86400 * EPG_DAYS) || SiEitEvent.getStartTime() > 0 && SiEitEvent.getDuration() == 0)
+          continue;
+       Empty = false;
+       if (!SegmentStart)
+diff -urp vdr-1.6.0.orig/epg.h vdr-1.6.0/epg.h
+--- vdr-1.6.0.orig/epg.h	2006-10-07 13:47:19 +0000
++++ vdr-1.6.0/epg.h	2008-03-29 16:37:46 +0000
+@@ -19,6 +19,8 @@
+ 
+ #define MAXEPGBUGFIXLEVEL 3
+ 
++#define EPG_DAYS 14
++
+ enum eDumpMode { dmAll, dmPresent, dmFollowing, dmAtTime };
+ 
+ struct tComponent {

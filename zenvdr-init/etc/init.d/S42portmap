@@ -1,0 +1,47 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+#Skip if network is not up
+[ -e /tmp/nonet ] && exit 0
+
+. /etc/adminbase.conf
+
+echo -n "Portmap: "
+
+start() {
+  echo -n "Starting Portmap "
+  /sbin/portmap
+}
+stop() {
+  echo -n "Unmounting NFS "
+  umount -a -t nfs
+  echo -n "Stopping Portmap "
+  killall portmap
+}
+restart() {
+  stop
+  sleep 1
+  start
+}
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+echo "OK"
+
+exit $?
+

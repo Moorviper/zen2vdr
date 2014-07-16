@@ -1,0 +1,133 @@
+# VDR build system CONTRIB config file
+#
+# This program is free software; you can redistribute it and/or
+# modify it under the terms of the GNU General Public License
+# as published by the Free Software Foundation; either version 2
+# of the License, or (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program; if not, write to the Free Software
+# Foundation, Inc., 51 Franklin Street, Fifth Floor, Boston, MA 02110-1301, USA. 
+#
+# ----------------------------------------------------------------------------
+# IMPORTANT:
+#
+# This file is part of the automated vdr build and install system that
+# is used to build the contrib components for the zentoo-vdr distribution.
+# This file is not part of the core components, but is supplied by a 
+# third party developer.
+# These files are supplied on an as-is basis, the core developers do not
+# provide any feedback on issues caused or raised by these components.
+#
+# For inclusion in the build trees all contributed submissions must be 
+# accompanied by a proper Signed-off-by: statement from the submitter below.
+#
+# ----
+#
+# Submitters comments: 
+#
+# Signed-off-by: Rainer Glatz <rainer dot glatz at web dot de>
+#
+# ----------------------------------------------------------------------------
+#
+# This script is executed from the main VDR build script when a component
+# or plugin is to be installed into the VDR build environment.
+#
+# Functions within the script are:
+#
+#  - prep(): To configure a plugin before compiling VDR or to patch VDR
+#
+#  - install(): To install a plugin or feature package or its components
+#
+#  - config(): To write a VDR config options file for this feature or package
+#
+
+PACKAGE_NAME="prefermenu"
+PACKAGE_VER="0.6.6"
+
+echo "Conf script for vdr-${PACKAGE_NAME}-$PACKAGE_VER"
+
+# Remember where we came from
+OLD_DIR=`pwd`
+
+prep() {
+  echo "Starting prep for component: ${0}"
+  
+  echo "Source package."
+  if [ ! -e ${DL_DIR}/vdr-${PACKAGE_NAME}-${PACKAGE_VER}.tgz ]; then
+    wget http://famillejacques.free.fr/vdr/prefermenu/vdr-${PACKAGE_NAME}-${PACKAGE_VER}.tgz -P ${DL_DIR}
+    RC=$?
+    if [ ! $RC == 0 ]; then
+      echo FAILED;
+      exit 1
+    fi
+  fi
+  
+  if [ X${VDR_DIR} == X ]; then
+    echo "VDR directory variable not set - cannot continue !"
+    exit 2
+  fi
+  
+  echo "Extracting into: ${VDR_DIR}/PLUGINS/src"
+  tar xzf ${DL_DIR}/vdr-${PACKAGE_NAME}-${PACKAGE_VER}.tgz -C ${VDR_DIR}/PLUGINS/src
+  ln -sf ${VDR_DIR}/PLUGINS/src/${PACKAGE_NAME}-${PACKAGE_VER} ${VDR_DIR}/PLUGINS/src/${PACKAGE_NAME}
+
+  cd ${VDR_DIR}/PLUGINS/src/${PACKAGE_NAME}
+     sed -i -e s/VDRVERSION/APIVERSION/g Makefile
+  cd -
+  
+  cd ${OLD_DIR}
+}
+
+install() {
+  echo "Starting install for component: ${0}"
+
+  if [ ! -e ${TARGET_DIR}/usr/local/lib/vdr ]; then           
+    mkdir -p ${TARGET_DIR}/usr/local/lib/vdr
+  fi                                                            
+  /usr/bin/install ${VDR_DIR}/PLUGINS/lib/libvdr-${PACKAGE_NAME}* ${TARGET_DIR}/usr/local/lib/vdr
+
+  if [ ! -e ${TARGET_DIR}/etc/vdr.d/all ]; then           
+    mkdir -p ${TARGET_DIR}/etc/vdr.d/all
+  fi                                                            
+  
+  cat - > ${TARGET_DIR}/etc/vdr.d/all/plg.${PACKAGE_NAME} << EOF
+# prefermenu configuration script
+#
+RECORD_SCRIPT=""
+STARTUP_SCRIPT=""
+PLUGIN_NAME="prefermenu"
+PLUGIN_PARAMETERS=""
+SHUTDOWN_SCRIPT=""
+EOF
+
+  cd ${OLD_DIR}                                                            
+}
+
+config() {
+  echo "Starting config for component: ${0}"
+
+  cd ${TARGET_DIR}/etc/vdr.d
+  ln -sf ./all/plg.${PACKAGE_NAME}  0200-plg.${PACKAGE_NAME}
+  cd ${OLD_DIR}                                                            
+}
+
+case "$1" in
+  (prep)
+    prep
+    ;;
+  (install)
+    install
+    ;;
+  (config)
+    config
+    ;;
+  *)
+    echo $"Usage: $0 {prep|install|config}"
+    exit 1
+esac

@@ -1,0 +1,87 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+#Skip if network is not up
+[ -e /tmp/nonet ] && exit 0
+
+. /etc/admin.conf
+[ "${SV_SSHD}" == "0" ] && exit 0
+
+echo -n "SSHD: "
+
+start() {
+  echo -n "config "
+  [ -e /tmp/config/conf/etc/ssh/ssh_host_key ]          && cp /tmp/config/conf/etc/ssh/ssh_host_key /etc/ssh
+  [ -e /tmp/config/conf/etc/ssh/ssh_host_key.pub ]      && cp /tmp/config/conf/etc/ssh/ssh_host_key /etc/ssh
+  [ -e /tmp/config/conf/etc/ssh/ssh_host_dsa_key ]      && cp /tmp/config/conf/etc/ssh/ssh_host_dsa_key /etc/ssh
+  [ -e /tmp/config/conf/etc/ssh/ssh_host_dsa_key.pub ]  && cp /tmp/config/conf/etc/ssh/ssh_host_dsa_key.pub /etc/ssh
+  [ -e /tmp/config/conf/etc/ssh/ssh_host_rsa_key ]      && cp /tmp/config/conf/etc/ssh/ssh_host_rsa_key /etc/ssh
+  [ -e /tmp/config/conf/etc/ssh/ssh_host_rsa_key.pub ]  && cp /tmp/config/conf/etc/ssh/ssh_host_rsa_key.pub /etc/ssh
+  [ -e /tmp/config/conf/etc/ssh/sshd.conf            ]  && cp /tmp/config/conf/etc/ssh/sshd.conf /etc/ssh
+  
+  echo -n "keys "
+  # Create host keys if needed.
+  if [ ! -r /etc/ssh/ssh_host_key ]; then
+    /usr/bin/ssh-keygen -t rsa1 -f /etc/ssh/ssh_host_key -N ''
+  fi
+  if [ ! -f /etc/ssh/ssh_host_dsa_key ]; then
+    /usr/bin/ssh-keygen -t dsa -f /etc/ssh/ssh_host_dsa_key -N ''
+  fi
+  if [ ! -f /etc/ssh/ssh_host_rsa_key ]; then
+    /usr/bin/ssh-keygen -t rsa -f /etc/ssh/ssh_host_rsa_key -N ''
+  fi
+
+  echo -n "sshd "
+  /usr/sbin/sshd
+
+}
+stop() {
+  echo -n "Stopping sshd "
+  killall sshd
+  
+  echo -n "config "
+  [ -e /tmp/config/conf/etc/ssh ] || mkdir -p /tmp/config/conf/etc/ssh
+  
+  [ -e /etc/ssh/ssh_host_key ]          && cp /etc/ssh/ssh_host_key /tmp/config/conf/etc/ssh
+  [ -e /etc/ssh/ssh_host_key.pub ]      && cp /etc/ssh/ssh_host_key /tmp/config/conf/etc/ssh
+  [ -e /etc/ssh/ssh_host_dsa_key ]      && cp /etc/ssh/ssh_host_dsa_key /tmp/config/conf/etc/ssh
+  [ -e /etc/ssh/ssh_host_dsa_key.pub ]  && cp /etc/ssh/ssh_host_dsa_key.pub /tmp/config/conf/etc/ssh
+  [ -e /etc/ssh/ssh_host_rsa_key ]      && cp /etc/ssh/ssh_host_rsa_key /tmp/config/conf/etc/ssh
+  [ -e /etc/ssh/ssh_host_rsa_key.pub ]  && cp /etc/ssh/ssh_host_rsa_key.pub /tmp/config/conf/etc/ssh
+  [ -e /etc/ssh/sshd.conf ]             && cp /etc/ssh/sshd.conf /tmp/config/conf/etc/ssh
+  
+  echo "OK"
+}
+restart() {
+  if [ -r /var/run/sshd.pid ]; then
+    echo -n "listener "
+    kill `cat /var/run/sshd.pid`
+  else
+    echo -n "sshd "
+    killall sshd
+  fi
+  sleep 1
+  start
+}
+
+case "$1" in
+  start)
+  	start
+	;;
+  stop)
+  	stop
+	;;
+  restart|reload)
+  	restart
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart}"
+	exit 1
+esac
+
+echo "OK"
+
+exit $?
+

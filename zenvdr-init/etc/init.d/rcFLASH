@@ -1,0 +1,113 @@
+#!/bin/sh
+# zen2vdr - a VDR microdistribution based on gentoo linux
+# Copyright (C) <2008-2011>  D.Herrendoerfer. 
+# Distributed under the terms of the GPLv2
+
+# Start some init scripts in /etc/init.d
+# Just do enough to be able to start the flasher.
+#
+
+for i in /etc/init.d/S[1-2]?* ;do
+
+     # Ignore dangling symlinks (if any).
+     [ ! -f "$i" ] && continue
+
+     case "$i" in
+	*.sh)
+	    # Source shell script for speed.
+	    (
+		trap - INT QUIT TSTP
+		set start
+		. $i
+	    )
+	    ;;
+	*)
+	    # No sh extension, so fork subprocess.
+	    $i start
+	    ;;
+    esac
+done
+
+/etc/init.d/S40network start
+
+# Only try one time
+rm /tmp/config/flashupdate
+[ -e /tmp/config/flashupdate_clear ] && CLEARSETTINGS=1
+[ -e /tmp/config/flashupdate_shutdown ] && SHUTDOWN=1
+rm -f /tmp/config/flashupdate_clear
+rm -f /tmp/config/flashupdate_shutdown
+
+. /etc/update.conf
+
+
+cd /tmp
+echo -e '\033[9;0]\033[14;0]' > /dev/console
+
+echo > /dev/tty0
+echo "          preparing to download and flash rom image ..." > /dev/tty0
+
+wget -q http://${UPDATE_SERVER}/zentoo/${UPDATE_VERSION}/VERSION
+
+if [ $? != 0 ]; then
+  echo "            version info download failed. (hold power to switch off)" > /dev/tty0
+  sleep 360000
+  exit 1
+fi
+echo "            version info download ok." > /dev/tty0
+
+if [ 0`cat VERSION` -le 0`[ -e /VERSION ] && cat /VERSION` ]; then 
+  echo "            your ROM is up-to-date. (hold power to switch off)" > /dev/tty0
+  sleep 360000
+  exit 1
+fi
+
+echo "            downloading new ROM." > /dev/tty0
+wget http://${UPDATE_SERVER}/zentoo/${UPDATE_VERSION}/zen2vdr.rom.bz2 -O - | bunzip2 > zen2vdr.rom
+
+if [ $? != 0 ]; then
+  echo "            uncompression failed. (hold power to switch off)" > /dev/tty0
+  sleep 360000
+  exit 1
+fi
+
+echo "            saving old ROM." > /dev/tty0
+dd if=/dev/hda2 of=zen2vdr.rom.old bs=512 conv=fsync
+if [ $? != 0 ]; then
+  echo "            ROM saving failed. (hold power to switch off)" > /dev/tty0
+  sleep 360000
+  exit 1
+fi
+
+echo "            ROM download ok." > /dev/tty0
+echo "            flashing in 30s." > /dev/tty0
+echo "            Press and hold power to abort NOW !" > /dev/tty0
+sleep 30
+echo "            !flashing! don't power off the system !" > /dev/tty0
+
+[ X${CLEARSETTINGS} == X1 ] && rm -rf /tmp/config/conf/*
+sync
+umount /tmp/config
+sleep 2
+
+echo "            ! This can take more than 5 minutes !" > /dev/tty0
+dd if=zen2vdr.rom of=/dev/hda2 bs=512 conv=fsync
+
+if [ $? != 0 ]; then
+  echo "            There was a problem updating your ROM." > /dev/tty0
+  echo "            Reverting to the previous ROM image." > /dev/tty0
+  dd if=zen2vdr.rom.old of=/dev/hda2 bs=512 conv=fsync
+  if [ $? != 0 ]; then
+    echo "            ROM reverting failed too. (hold power to switch off)" > /dev/tty0
+    echo "            !!! Please check your DOM/DISK Drive for errors. !!!" > /dev/tty0
+    sleep 360000
+    exit 1
+  fi
+fi
+
+echo "            Success !!!" > /dev/tty0
+sleep 10
+[ X${SHUTDOWN} == X1 ] && echo -e -n "\x20\x30\x20\x30\x20\x30\x01\x01" > /dev/ttyS1
+
+echo "            Done. Press and hold power NOW !" > /dev/tty0
+sleep 360000
+
