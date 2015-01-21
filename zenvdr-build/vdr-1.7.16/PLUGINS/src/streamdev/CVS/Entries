@@ -1,0 +1,20 @@
+/COPYING/1.1.1.1/Thu Dec 30 22:43:56 2004//
+/PROTOCOL/1.1.1.1/Thu Dec 30 22:43:58 2004//
+/streamdev-client.h/1.1.1.1/Thu Dec 30 22:43:59 2004//
+/streamdev-server.h/1.4/Mon Feb 19 12:08:16 2007//
+D/client////
+D/libdvbmpeg////
+D/patches////
+D/remux////
+D/server////
+D/tools////
+/streamdev-client.c/1.6/Tue May 13 11:05:18 2008//
+D/po////
+D/streamdev////
+/CONTRIBUTORS/1.30/Sun Jan 24 20:48:39 2010//
+/HISTORY/1.51/Sun Jan 24 20:48:40 2010//
+/Makefile/1.20/Sun Jan 24 20:48:40 2010//
+/README/1.20/Sun Jan 24 20:48:40 2010//
+/common.c/1.11/Sun Jan 24 20:48:40 2010//
+/common.h/1.15/Sun Jan 24 20:48:40 2010//
+/streamdev-server.c/1.12/Sun Jan 24 20:48:40 2010//

@@ -1,0 +1,61 @@
+/COPYING/1.1/Sat Jun  3 09:41:24 2006//
+/black_720x576.mpg/1.1/Sat Jun  3 09:44:41 2006//
+/dummy_player.c/1.3/Mon Oct 15 00:15:07 2007//
+/dummy_player.h/1.1/Sat Jun  3 09:50:54 2006//
+/equalizer.h/1.1/Sat Jun  3 09:50:54 2006//
+/logdefs.h/1.14/Sat Aug  1 19:46:49 2009//
+/menuitems.c/1.15/Sun Aug  2 11:38:24 2009//
+/mpg2c.c/1.3/Sun Jun  4 11:00:04 2006//
+/nosignal_720x576.mpg/1.1/Sat Jun  3 09:44:41 2006//
+/setup_menu.h/1.1/Sat Jun  3 09:50:54 2006//
+/tools.c/1.2/Tue Jan 27 09:25:22 2009//
+/vdrlogo_32x32.c/1.4/Wed May 27 09:39:08 2009//
+/vdrlogo_720x576.mpg/1.1/Sat Jun  3 09:44:41 2006//
+/xine_input_vdr_mrl.h/1.1/Tue Nov 11 23:46:41 2008//
+/xine_post_audiochannel.c/1.6/Thu May 22 09:56:02 2008//
+D/examples////
+D/po////
+D/tools////
+D/xine////
+/equalizer.c/1.6/Sun Jul 18 12:32:25 2010//
+/menu.h/1.8/Sun Jul 18 12:32:25 2010//
+/menuitems.h/1.10/Sun Jul 18 12:32:25 2010//
+/xine_input_vdr.h/1.11/Sun Jul 18 12:32:25 2010//
+D/include////
+/logdefs.c/1.3/Thu Jan 13 19:25:18 2011//
+/media_player.c/1.86/Thu Jan 13 19:25:18 2011//
+/media_player.h/1.23/Thu Jan 13 19:25:18 2011//
+/xine_input_vdr_net.h/1.16/Thu Jan 13 19:25:18 2011//
+/HISTORY/1.60/Wed Mar 30 20:16:30 2011//
+/Makefile/1.106/Wed Mar 30 20:16:30 2011//
+/README/1.37/Wed Mar 30 20:16:30 2011//
+/config.c/1.103/Wed Mar 30 20:16:30 2011//
+/config.h/1.78/Wed Mar 30 20:16:30 2011//
+/configure/1.36/Wed Mar 30 20:16:30 2011//
+/device.c/1.113/Wed Mar 30 20:16:30 2011//
+/device.h/1.61/Wed Mar 30 20:16:30 2011//
+/frontend.c/1.95/Wed Mar 30 20:16:30 2011//
+/frontend.h/1.41/Wed Mar 30 20:16:30 2011//
+/frontend_local.c/1.55/Wed Mar 30 20:16:30 2011//
+/frontend_local.h/1.9/Wed Mar 30 20:16:30 2011//
+/frontend_svr.c/1.103/Wed Mar 30 20:16:30 2011//
+/frontend_svr.h/1.30/Wed Mar 30 20:16:30 2011//
+/menu.c/1.84/Wed Mar 30 20:16:30 2011//
+/osd.c/1.48/Wed Mar 30 20:16:30 2011//
+/osd.h/1.6/Wed Mar 30 20:16:30 2011//
+/setup_menu.c/1.82/Wed Mar 30 20:16:30 2011//
+/xine_fbfe_frontend.c/1.48/Wed Mar 30 20:16:30 2011//
+/xine_frontend.c/1.119/Wed Mar 30 20:16:31 2011//
+/xine_frontend.h/1.25/Wed Mar 30 20:16:31 2011//
+/xine_frontend_internal.h/1.8/Wed Mar 30 20:16:31 2011//
+/xine_frontend_kbd.c/1.1/Sun Jan 23 19:42:08 2011//
+/xine_frontend_kbd.h/1.2/Mon Feb 28 13:41:08 2011//
+/xine_frontend_lirc.c/1.26/Wed Mar 30 20:16:31 2011//
+/xine_frontend_lirc.h/1.4/Wed Mar 30 20:16:31 2011//
+/xine_frontend_main.c/1.96/Wed Mar 30 20:16:31 2011//
+/xine_input_vdr.c/1.335/Wed Mar 30 20:16:31 2011//
+/xine_osd_command.h/1.17/Wed Mar 30 20:16:31 2011//
+/xine_post_autocrop.c/1.51/Wed Mar 30 20:16:31 2011//
+/xine_post_swscale.c/1.15/Wed Mar 30 20:16:31 2011//
+/xine_sxfe_frontend.c/1.158/Wed Mar 30 20:16:31 2011//
+/xineliboutput.c/1.45/Wed Mar 30 20:16:31 2011//

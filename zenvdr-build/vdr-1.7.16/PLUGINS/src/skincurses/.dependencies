@@ -1,0 +1,17 @@
+skincurses.o: skincurses.c ../../../include/vdr/osd.h \
+ ../../../include/vdr/config.h ../../../include/vdr/i18n.h \
+ ../../../include/vdr/tools.h ../../../include/vdr/font.h \
+ ../../../include/vdr/plugin.h ../../../include/vdr/menuitems.h \
+ ../../../include/vdr/dvbdevice.h ../../../include/vdr/device.h \
+ ../../../include/vdr/channels.h ../../../include/vdr/sources.h \
+ ../../../include/vdr/thread.h ../../../include/vdr/ci.h \
+ ../../../include/vdr/dvbsubtitle.h ../../../include/vdr/osd.h \
+ ../../../include/vdr/eit.h ../../../include/vdr/filter.h \
+ ../../../include/vdr/nit.h ../../../include/vdr/pat.h \
+ ../../../include/vdr/remux.h ../../../include/vdr/ringbuffer.h \
+ ../../../include/vdr/sdt.h ../../../include/vdr/sections.h \
+ ../../../include/vdr/spu.h ../../../include/vdr/osdbase.h \
+ ../../../include/vdr/skins.h ../../../include/vdr/epg.h \
+ ../../../include/vdr/keys.h ../../../include/vdr/recording.h \
+ ../../../include/vdr/timers.h ../../../include/vdr/themes.h \
+ ../../../include/vdr/skins.h

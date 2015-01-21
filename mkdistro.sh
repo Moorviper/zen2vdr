@@ -14,15 +14,15 @@ cp ./zentoo-kernel-build/prebuild/modules-2.6.36.tgz ./distro
 
 cd distro
 
-echo "make sure DOM is present as /dev/sda"
+echo "make sure DOM is present as /dev/sdc"
 echo PRESS ENTER TO CONTINE CTRL+C TO STOP
 read foo
 
 echo Installing kernel and lilo
-mount /dev/sda1 mnt
+mount /dev/sdc1 mnt
 cp bzImage mnt/boot/bzImage 
 cp modules-2.6.36.tgz mnt/boot/modules.tgz 
-lilo -r mnt -b /dev/sda 
+lilo -r mnt -b /dev/sdc 
 
 echo Cleaning updates and conf
 rm  -f  mnt/updates/*
@@ -33,7 +33,7 @@ cd ..
 umount mnt
 
 echo Installing ROM image
-bzcat zen2vdr.rom.bz2 > /dev/sda2
+bzcat zen2vdr.rom.bz2 > /dev/sdc2
 
 echo Saving DOM image
-dd if=/dev/sda of=zen2vdr-r2.img bs=512
+dd if=/dev/sdc of=zen2vdr-r2.img bs=512

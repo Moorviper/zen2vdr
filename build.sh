@@ -15,7 +15,7 @@ PREFIX="/zensysgen-glibc" ./build.sh
 cd $BASEDIR
 
 cd zenvdr-build
-RESOURCE="R2" TARGET_DIR="/zensysgen-glibc" METHOD="tar" ./build.sh
+RESOURCE="R3" TARGET_DIR="/zensysgen-glibc" METHOD="tar" ./build.sh
 cd $BASEDIR
 
 cd zenvdr-init

@@ -1,0 +1,369 @@
+xineliboutput.o: xineliboutput.c features.h ../../../include/vdr/plugin.h \
+ ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/menuitems.h ../../../include/vdr/dvbdevice.h \
+ ../../../include/vdr/device.h ../../../include/vdr/channels.h \
+ ../../../include/vdr/config.h ../../../include/vdr/font.h \
+ ../../../include/vdr/sources.h ../../../include/vdr/thread.h \
+ ../../../include/vdr/ci.h ../../../include/vdr/dvbsubtitle.h \
+ ../../../include/vdr/osd.h ../../../include/vdr/eit.h \
+ ../../../include/vdr/filter.h ../../../include/vdr/nit.h \
+ ../../../include/vdr/pat.h ../../../include/vdr/remux.h \
+ ../../../include/vdr/ringbuffer.h ../../../include/vdr/sdt.h \
+ ../../../include/vdr/sections.h ../../../include/vdr/spu.h \
+ ../../../include/vdr/osdbase.h ../../../include/vdr/skins.h \
+ ../../../include/vdr/epg.h ../../../include/vdr/keys.h \
+ ../../../include/vdr/recording.h ../../../include/vdr/timers.h \
+ ../../../include/vdr/themes.h ../../../include/vdr/i18n.h logdefs.h \
+ config.h ../../../include/vdr/config.h device.h \
+ ../../../include/vdr/device.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/thread.h setup_menu.h \
+ ../../../include/vdr/menuitems.h menu.h media_player.h
+device.o: device.c ../../../include/vdr/config.h \
+ ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/font.h ../../../include/vdr/thread.h \
+ ../../../include/vdr/dvbspu.h ../../../include/vdr/osd.h \
+ ../../../include/vdr/config.h ../../../include/vdr/spu.h \
+ ../../../include/vdr/thread.h ../../../include/vdr/channels.h \
+ ../../../include/vdr/sources.h ../../../include/vdr/skins.h \
+ ../../../include/vdr/channels.h ../../../include/vdr/epg.h \
+ ../../../include/vdr/keys.h ../../../include/vdr/recording.h \
+ ../../../include/vdr/timers.h ../../../include/vdr/themes.h \
+ ../../../include/vdr/status.h ../../../include/vdr/device.h \
+ ../../../include/vdr/ci.h ../../../include/vdr/dvbsubtitle.h \
+ ../../../include/vdr/eit.h ../../../include/vdr/filter.h \
+ ../../../include/vdr/nit.h ../../../include/vdr/pat.h \
+ ../../../include/vdr/remux.h ../../../include/vdr/ringbuffer.h \
+ ../../../include/vdr/sdt.h ../../../include/vdr/sections.h \
+ ../../../include/vdr/player.h ../../../include/vdr/osdbase.h \
+ ../../../include/vdr/skins.h ../../../include/vdr/remote.h logdefs.h \
+ config.h features.h osd.h ../../../include/vdr/osd.h tools/listiter.h \
+ tools/mpeg.h tools/pes.h tools/ts.h tools/functor.h \
+ ../../../include/vdr/tools.h tools/functorimpl.h tools/section_lock.h \
+ frontend_local.h frontend.h ../../../include/vdr/device.h \
+ xine_input_vdr_net.h tools/rtp.h frontend_svr.h tools/cxsocket.h \
+ device.h
+frontend.o: frontend.c ../../../include/vdr/config.h \
+ ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/font.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/plugin.h ../../../include/vdr/menuitems.h \
+ ../../../include/vdr/dvbdevice.h ../../../include/vdr/device.h \
+ ../../../include/vdr/channels.h ../../../include/vdr/config.h \
+ ../../../include/vdr/sources.h ../../../include/vdr/thread.h \
+ ../../../include/vdr/ci.h ../../../include/vdr/dvbsubtitle.h \
+ ../../../include/vdr/osd.h ../../../include/vdr/eit.h \
+ ../../../include/vdr/filter.h ../../../include/vdr/nit.h \
+ ../../../include/vdr/pat.h ../../../include/vdr/remux.h \
+ ../../../include/vdr/ringbuffer.h ../../../include/vdr/sdt.h \
+ ../../../include/vdr/sections.h ../../../include/vdr/spu.h \
+ ../../../include/vdr/osdbase.h ../../../include/vdr/skins.h \
+ ../../../include/vdr/epg.h ../../../include/vdr/keys.h \
+ ../../../include/vdr/recording.h ../../../include/vdr/timers.h \
+ ../../../include/vdr/themes.h logdefs.h config.h features.h frontend.h \
+ ../../../include/vdr/thread.h ../../../include/vdr/device.h \
+ xine_input_vdr_net.h tools/rtp.h device.h tools/pes.h tools/mpeg.h \
+ tools/h264.h tools/mpeg.h tools/general_remote.h \
+ ../../../include/vdr/remote.h tools/iso639.h \
+ ../../../include/vdr/status.h ../../../include/vdr/player.h
+osd.o: osd.c ../../../include/vdr/config.h ../../../include/vdr/i18n.h \
+ ../../../include/vdr/tools.h ../../../include/vdr/font.h \
+ ../../../include/vdr/tools.h ../../../include/vdr/thread.h logdefs.h \
+ config.h features.h device.h ../../../include/vdr/device.h \
+ ../../../include/vdr/channels.h ../../../include/vdr/config.h \
+ ../../../include/vdr/sources.h ../../../include/vdr/thread.h \
+ ../../../include/vdr/ci.h ../../../include/vdr/dvbsubtitle.h \
+ ../../../include/vdr/osd.h ../../../include/vdr/eit.h \
+ ../../../include/vdr/filter.h ../../../include/vdr/nit.h \
+ ../../../include/vdr/pat.h ../../../include/vdr/remux.h \
+ ../../../include/vdr/ringbuffer.h ../../../include/vdr/sdt.h \
+ ../../../include/vdr/sections.h ../../../include/vdr/spu.h \
+ xine_osd_command.h osd.h ../../../include/vdr/osd.h
+config.o: config.c features.h ../../../include/vdr/config.h \
+ ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/font.h ../../../include/vdr/videodir.h \
+ ../../../include/vdr/device.h ../../../include/vdr/channels.h \
+ ../../../include/vdr/config.h ../../../include/vdr/sources.h \
+ ../../../include/vdr/thread.h ../../../include/vdr/ci.h \
+ ../../../include/vdr/dvbsubtitle.h ../../../include/vdr/osd.h \
+ ../../../include/vdr/eit.h ../../../include/vdr/filter.h \
+ ../../../include/vdr/nit.h ../../../include/vdr/pat.h \
+ ../../../include/vdr/remux.h ../../../include/vdr/ringbuffer.h \
+ ../../../include/vdr/sdt.h ../../../include/vdr/sections.h \
+ ../../../include/vdr/spu.h ../../../include/vdr/i18n.h logdefs.h \
+ config.h xine_frontend.h
+menu.o: menu.c features.h ../../../include/vdr/config.h \
+ ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/font.h ../../../include/vdr/interface.h \
+ ../../../include/vdr/config.h ../../../include/vdr/remote.h \
+ ../../../include/vdr/keys.h ../../../include/vdr/thread.h \
+ ../../../include/vdr/skins.h ../../../include/vdr/channels.h \
+ ../../../include/vdr/sources.h ../../../include/vdr/epg.h \
+ ../../../include/vdr/osd.h ../../../include/vdr/recording.h \
+ ../../../include/vdr/timers.h ../../../include/vdr/themes.h \
+ ../../../include/vdr/svdrp.h ../../../include/vdr/menu.h \
+ ../../../include/vdr/ci.h ../../../include/vdr/device.h \
+ ../../../include/vdr/dvbsubtitle.h ../../../include/vdr/eit.h \
+ ../../../include/vdr/filter.h ../../../include/vdr/nit.h \
+ ../../../include/vdr/pat.h ../../../include/vdr/remux.h \
+ ../../../include/vdr/ringbuffer.h ../../../include/vdr/sdt.h \
+ ../../../include/vdr/sections.h ../../../include/vdr/spu.h \
+ ../../../include/vdr/osdbase.h ../../../include/vdr/dvbplayer.h \
+ ../../../include/vdr/player.h ../../../include/vdr/menuitems.h \
+ ../../../include/vdr/dvbdevice.h ../../../include/vdr/recorder.h \
+ ../../../include/vdr/receiver.h ../../../include/vdr/plugin.h \
+ ../../../include/vdr/videodir.h ../../../include/vdr/i18n.h logdefs.h \
+ config.h menu.h ../../../include/vdr/menuitems.h menuitems.h \
+ tools/metainfo_menu.h ../../../include/vdr/osdbase.h tools/playlist.h \
+ ../../../include/vdr/tools.h ../../../include/vdr/thread.h device.h \
+ ../../../include/vdr/device.h media_player.h equalizer.h \
+ tools/display_message.h ../../../include/vdr/skins.h
+setup_menu.o: setup_menu.c features.h ../../../include/vdr/config.h \
+ ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/font.h ../../../include/vdr/plugin.h \
+ ../../../include/vdr/menuitems.h ../../../include/vdr/dvbdevice.h \
+ ../../../include/vdr/device.h ../../../include/vdr/channels.h \
+ ../../../include/vdr/config.h ../../../include/vdr/sources.h \
+ ../../../include/vdr/thread.h ../../../include/vdr/ci.h \
+ ../../../include/vdr/dvbsubtitle.h ../../../include/vdr/osd.h \
+ ../../../include/vdr/eit.h ../../../include/vdr/filter.h \
+ ../../../include/vdr/nit.h ../../../include/vdr/pat.h \
+ ../../../include/vdr/remux.h ../../../include/vdr/ringbuffer.h \
+ ../../../include/vdr/sdt.h ../../../include/vdr/sections.h \
+ ../../../include/vdr/spu.h ../../../include/vdr/osdbase.h \
+ ../../../include/vdr/skins.h ../../../include/vdr/epg.h \
+ ../../../include/vdr/keys.h ../../../include/vdr/recording.h \
+ ../../../include/vdr/timers.h ../../../include/vdr/themes.h \
+ ../../../include/vdr/remote.h ../../../include/vdr/i18n.h config.h \
+ device.h ../../../include/vdr/device.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/thread.h menuitems.h \
+ ../../../include/vdr/menuitems.h osd.h ../../../include/vdr/osd.h \
+ setup_menu.h tools/playlist.h ../../../include/vdr/osdbase.h
+menuitems.o: menuitems.c ../../../include/vdr/i18n.h \
+ ../../../include/vdr/tools.h menuitems.h \
+ ../../../include/vdr/menuitems.h ../../../include/vdr/dvbdevice.h \
+ ../../../include/vdr/device.h ../../../include/vdr/channels.h \
+ ../../../include/vdr/config.h ../../../include/vdr/i18n.h \
+ ../../../include/vdr/font.h ../../../include/vdr/sources.h \
+ ../../../include/vdr/thread.h ../../../include/vdr/ci.h \
+ ../../../include/vdr/dvbsubtitle.h ../../../include/vdr/osd.h \
+ ../../../include/vdr/eit.h ../../../include/vdr/filter.h \
+ ../../../include/vdr/nit.h ../../../include/vdr/pat.h \
+ ../../../include/vdr/remux.h ../../../include/vdr/ringbuffer.h \
+ ../../../include/vdr/sdt.h ../../../include/vdr/sections.h \
+ ../../../include/vdr/spu.h ../../../include/vdr/osdbase.h \
+ ../../../include/vdr/skins.h ../../../include/vdr/epg.h \
+ ../../../include/vdr/keys.h ../../../include/vdr/recording.h \
+ ../../../include/vdr/timers.h ../../../include/vdr/themes.h
+media_player.o: media_player.c ../../../include/vdr/config.h \
+ ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/font.h ../../../include/vdr/status.h \
+ ../../../include/vdr/config.h ../../../include/vdr/device.h \
+ ../../../include/vdr/channels.h ../../../include/vdr/sources.h \
+ ../../../include/vdr/thread.h ../../../include/vdr/ci.h \
+ ../../../include/vdr/dvbsubtitle.h ../../../include/vdr/osd.h \
+ ../../../include/vdr/eit.h ../../../include/vdr/filter.h \
+ ../../../include/vdr/nit.h ../../../include/vdr/pat.h \
+ ../../../include/vdr/remux.h ../../../include/vdr/ringbuffer.h \
+ ../../../include/vdr/sdt.h ../../../include/vdr/sections.h \
+ ../../../include/vdr/spu.h ../../../include/vdr/player.h \
+ ../../../include/vdr/osdbase.h ../../../include/vdr/skins.h \
+ ../../../include/vdr/epg.h ../../../include/vdr/keys.h \
+ ../../../include/vdr/recording.h ../../../include/vdr/timers.h \
+ ../../../include/vdr/themes.h ../../../include/vdr/interface.h \
+ ../../../include/vdr/remote.h ../../../include/vdr/svdrp.h \
+ ../../../include/vdr/tools.h config.h features.h media_player.h device.h \
+ ../../../include/vdr/device.h ../../../include/vdr/thread.h \
+ tools/playlist.h tools/metainfo_menu.h ../../../include/vdr/osdbase.h \
+ menu.h ../../../include/vdr/menuitems.h ../../../include/vdr/dvbdevice.h \
+ logdefs.h ../../../include/vdr/skins.h
+equalizer.o: equalizer.c ../../../include/vdr/config.h \
+ ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/font.h config.h features.h device.h \
+ ../../../include/vdr/device.h ../../../include/vdr/channels.h \
+ ../../../include/vdr/config.h ../../../include/vdr/sources.h \
+ ../../../include/vdr/thread.h ../../../include/vdr/ci.h \
+ ../../../include/vdr/dvbsubtitle.h ../../../include/vdr/osd.h \
+ ../../../include/vdr/eit.h ../../../include/vdr/filter.h \
+ ../../../include/vdr/nit.h ../../../include/vdr/pat.h \
+ ../../../include/vdr/remux.h ../../../include/vdr/ringbuffer.h \
+ ../../../include/vdr/sdt.h ../../../include/vdr/sections.h \
+ ../../../include/vdr/spu.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/thread.h equalizer.h ../../../include/vdr/osdbase.h \
+ ../../../include/vdr/skins.h ../../../include/vdr/epg.h \
+ ../../../include/vdr/keys.h ../../../include/vdr/recording.h \
+ ../../../include/vdr/timers.h ../../../include/vdr/themes.h
+frontend_local.o: frontend_local.c ../../../include/vdr/config.h \
+ ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/font.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/shutdown.h ../../../include/vdr/plugin.h \
+ ../../../include/vdr/menuitems.h ../../../include/vdr/dvbdevice.h \
+ ../../../include/vdr/device.h ../../../include/vdr/channels.h \
+ ../../../include/vdr/config.h ../../../include/vdr/sources.h \
+ ../../../include/vdr/thread.h ../../../include/vdr/ci.h \
+ ../../../include/vdr/dvbsubtitle.h ../../../include/vdr/osd.h \
+ ../../../include/vdr/eit.h ../../../include/vdr/filter.h \
+ ../../../include/vdr/nit.h ../../../include/vdr/pat.h \
+ ../../../include/vdr/remux.h ../../../include/vdr/ringbuffer.h \
+ ../../../include/vdr/sdt.h ../../../include/vdr/sections.h \
+ ../../../include/vdr/spu.h ../../../include/vdr/osdbase.h \
+ ../../../include/vdr/skins.h ../../../include/vdr/epg.h \
+ ../../../include/vdr/keys.h ../../../include/vdr/recording.h \
+ ../../../include/vdr/timers.h ../../../include/vdr/themes.h logdefs.h \
+ config.h features.h xine_frontend.h frontend_local.h frontend.h \
+ ../../../include/vdr/thread.h ../../../include/vdr/device.h \
+ xine_input_vdr_net.h tools/rtp.h
+frontend_svr.o: frontend_svr.c ../../../include/vdr/config.h \
+ ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/font.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/plugin.h ../../../include/vdr/menuitems.h \
+ ../../../include/vdr/dvbdevice.h ../../../include/vdr/device.h \
+ ../../../include/vdr/channels.h ../../../include/vdr/config.h \
+ ../../../include/vdr/sources.h ../../../include/vdr/thread.h \
+ ../../../include/vdr/ci.h ../../../include/vdr/dvbsubtitle.h \
+ ../../../include/vdr/osd.h ../../../include/vdr/eit.h \
+ ../../../include/vdr/filter.h ../../../include/vdr/nit.h \
+ ../../../include/vdr/pat.h ../../../include/vdr/remux.h \
+ ../../../include/vdr/ringbuffer.h ../../../include/vdr/sdt.h \
+ ../../../include/vdr/sections.h ../../../include/vdr/spu.h \
+ ../../../include/vdr/osdbase.h ../../../include/vdr/skins.h \
+ ../../../include/vdr/epg.h ../../../include/vdr/keys.h \
+ ../../../include/vdr/recording.h ../../../include/vdr/timers.h \
+ ../../../include/vdr/themes.h logdefs.h config.h features.h \
+ xine_input_vdr_net.h tools/rtp.h xine_osd_command.h tools/cxsocket.h \
+ tools/future.h ../../../include/vdr/thread.h tools/backgroundwriter.h \
+ ../../../include/vdr/ringbuffer.h tools/udp_pes_scheduler.h \
+ tools/cxsocket.h tools/time_pts.h tools/http.h tools/vdrdiscovery.h \
+ tools/sdp.h tools/rle.h tools/sys_cap.h frontend_svr.h frontend.h \
+ ../../../include/vdr/device.h device.h osd.h ../../../include/vdr/osd.h
+tools/cxsocket.o: tools/cxsocket.c ../../../include/vdr/config.h \
+ ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/font.h ../../../include/vdr/tools.h \
+ tools/../logdefs.h tools/cxsocket.h
+tools/udp_pes_scheduler.o: tools/udp_pes_scheduler.c \
+ ../../../include/vdr/config.h ../../../include/vdr/i18n.h \
+ ../../../include/vdr/tools.h ../../../include/vdr/font.h \
+ ../../../include/vdr/tools.h ../../../include/vdr/videodir.h \
+ tools/../logdefs.h tools/../config.h tools/../features.h \
+ tools/../xine_input_vdr_net.h tools/../tools/rtp.h tools/ts.h \
+ tools/pes.h tools/udp_buffer.h tools/time_pts.h tools/cxsocket.h \
+ tools/sap.h tools/sdp.h tools/rtcp.h tools/sys_cap.h \
+ tools/udp_pes_scheduler.h ../../../include/vdr/thread.h
+tools/backgroundwriter.o: tools/backgroundwriter.c \
+ ../../../include/vdr/tools.h ../../../include/vdr/config.h \
+ ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/font.h tools/../logdefs.h \
+ tools/../xine_input_vdr_net.h tools/../tools/rtp.h tools/ts.h \
+ tools/pes.h tools/backgroundwriter.h ../../../include/vdr/thread.h \
+ ../../../include/vdr/ringbuffer.h ../../../include/vdr/thread.h
+tools/playlist.o: tools/playlist.c tools/../features.h \
+ ../../../include/vdr/config.h ../../../include/vdr/i18n.h \
+ ../../../include/vdr/tools.h ../../../include/vdr/font.h \
+ ../../../include/vdr/tools.h ../../../include/vdr/thread.h \
+ tools/../config.h tools/../features.h tools/playlist.h \
+ tools/../logdefs.h
+tools/http.o: tools/http.c ../../../include/vdr/config.h \
+ ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/font.h ../../../include/vdr/tools.h \
+ tools/../logdefs.h tools/http.h ../../../include/vdr/thread.h \
+ tools/cxsocket.h
+tools/vdrdiscovery.o: tools/vdrdiscovery.c tools/../logdefs.h \
+ tools/vdrdiscovery.h
+tools/time_pts.o: tools/time_pts.c ../../../include/vdr/config.h \
+ ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/font.h tools/../logdefs.h tools/time_pts.h
+tools.o: tools.c ../../../include/vdr/tools.h logdefs.h tools/pes.c \
+ tools/../logdefs.h tools/mpeg.h tools/h264.h tools/pes.h tools/mpeg.c \
+ tools/h264.c tools/bitstream.h tools/ts.c tools/ts.h
+tools/metainfo_menu.o: tools/metainfo_menu.c tools/../features.h \
+ ../../../include/vdr/status.h ../../../include/vdr/config.h \
+ ../../../include/vdr/i18n.h ../../../include/vdr/tools.h \
+ ../../../include/vdr/font.h ../../../include/vdr/device.h \
+ ../../../include/vdr/channels.h ../../../include/vdr/sources.h \
+ ../../../include/vdr/thread.h ../../../include/vdr/ci.h \
+ ../../../include/vdr/dvbsubtitle.h ../../../include/vdr/osd.h \
+ ../../../include/vdr/eit.h ../../../include/vdr/filter.h \
+ ../../../include/vdr/nit.h ../../../include/vdr/pat.h \
+ ../../../include/vdr/remux.h ../../../include/vdr/ringbuffer.h \
+ ../../../include/vdr/sdt.h ../../../include/vdr/sections.h \
+ ../../../include/vdr/spu.h ../../../include/vdr/player.h \
+ ../../../include/vdr/osdbase.h ../../../include/vdr/skins.h \
+ ../../../include/vdr/epg.h ../../../include/vdr/keys.h \
+ ../../../include/vdr/recording.h ../../../include/vdr/timers.h \
+ ../../../include/vdr/themes.h ../../../include/vdr/i18n.h \
+ tools/../config.h tools/../features.h ../../../include/vdr/config.h \
+ tools/metainfo_menu.h ../../../include/vdr/osdbase.h
+logdefs.o: logdefs.c logdefs.h
+tools/rle.o: tools/rle.c tools/../xine_osd_command.h tools/rle.h
+xine_sxfe_frontend.o: xine_sxfe_frontend.c features.h logdefs.h \
+ xine_osd_command.h xine_frontend_internal.h xine_frontend.h \
+ xine_input_vdr.h xine_input_vdr_mrl.h xine/post.h tools/rle.h \
+ vdrlogo_32x32.c
+xine_frontend.o: xine_frontend.c features.h logdefs.h \
+ xine_frontend_internal.h xine_frontend.h xine_input_vdr.h \
+ xine_input_vdr_mrl.h xine/post.h xine/vo_post.h xine/vo_osdscaler.h \
+ xine/vo_osdreorder.h xine/vo_lastpts.h
+logdefs.o: logdefs.c logdefs.h
+xine/post.o: xine/post.c xine/post.h xine/../logdefs.h
+xine/vo_osdscaler.o: xine/vo_osdscaler.c xine/../logdefs.h \
+ xine/vo_props.h xine/vo_hook.h xine/../tools/rle.h
+xine/vo_osdreorder.o: xine/vo_osdreorder.c xine/vo_props.h xine/vo_hook.h
+xine/vo_lastpts.o: xine/vo_lastpts.c xine/xvdr_metronom.h xine/vo_hook.h
+tools/rle.o: tools/rle.c tools/../xine_osd_command.h tools/rle.h
+tools/vdrdiscovery.o: tools/vdrdiscovery.c tools/../logdefs.h \
+ tools/vdrdiscovery.h
+xine_frontend_main.o: xine_frontend_main.c features.h logdefs.h \
+ xine_input_vdr_mrl.h xine_frontend.h tools/vdrdiscovery.h \
+ xine_frontend_lirc.h xine_frontend_kbd.h
+xine_frontend_lirc.o: xine_frontend_lirc.c logdefs.h xine_frontend.h \
+ xine_frontend_lirc.h
+xine_frontend_kbd.o: xine_frontend_kbd.c features.h logdefs.h \
+ xine_frontend.h xine_frontend_kbd.h
+tools/gnome_screensaver.o: tools/gnome_screensaver.c tools/../logdefs.h \
+ tools/gnome_screensaver.h
+xine_fbfe_frontend.o: xine_fbfe_frontend.c logdefs.h \
+ xine_frontend_internal.h xine_frontend.h xine_input_vdr.h \
+ xine_input_vdr_mrl.h xine/post.h
+xine_frontend.o: xine_frontend.c features.h logdefs.h \
+ xine_frontend_internal.h xine_frontend.h xine_input_vdr.h \
+ xine_input_vdr_mrl.h xine/post.h xine/vo_post.h xine/vo_osdscaler.h \
+ xine/vo_osdreorder.h xine/vo_lastpts.h
+logdefs.o: logdefs.c logdefs.h
+xine/post.o: xine/post.c xine/post.h xine/../logdefs.h
+xine/vo_osdscaler.o: xine/vo_osdscaler.c xine/../logdefs.h \
+ xine/vo_props.h xine/vo_hook.h xine/../tools/rle.h
+xine/vo_osdreorder.o: xine/vo_osdreorder.c xine/vo_props.h xine/vo_hook.h
+xine/vo_lastpts.o: xine/vo_lastpts.c xine/xvdr_metronom.h xine/vo_hook.h
+tools/rle.o: tools/rle.c tools/../xine_osd_command.h tools/rle.h
+tools/vdrdiscovery.o: tools/vdrdiscovery.c tools/../logdefs.h \
+ tools/vdrdiscovery.h
+xine_frontend_main.o: xine_frontend_main.c features.h logdefs.h \
+ xine_input_vdr_mrl.h xine_frontend.h tools/vdrdiscovery.h \
+ xine_frontend_lirc.h xine_frontend_kbd.h
+xine_frontend_lirc.o: xine_frontend_lirc.c logdefs.h xine_frontend.h \
+ xine_frontend_lirc.h
+xine_frontend_kbd.o: xine_frontend_kbd.c features.h logdefs.h \
+ xine_frontend.h xine_frontend_kbd.h
+xine/demux_xvdr.o: xine/demux_xvdr.c xine/../xine_input_vdr_mrl.h \
+ xine/../tools/mpeg.h xine/../tools/h264.h xine/../tools/mpeg.h \
+ xine/../tools/pes.h xine/../tools/ts.h xine/ts2es.h \
+ xine/demux_xvdr_tsdata.h xine/xvdr_metronom.h xine/../logdefs.h
+xine/ts2es.o: xine/ts2es.c xine/../tools/ts.h xine/../tools/pes.h \
+ xine/ts2es.h xine/../logdefs.h
+xine/demux_xvdr_tsdata.o: xine/demux_xvdr_tsdata.c xine/../logdefs.h \
+ xine/../tools/ts.h xine/ts2es.h xine/demux_xvdr_tsdata.h
+xine/adjustable_scr.o: xine/adjustable_scr.c xine/adjustable_scr.h
+xine/xvdr_metronom.o: xine/xvdr_metronom.c xine/../logdefs.h \
+ xine/xvdr_metronom.h
+xine/osd_manager.o: xine/osd_manager.c xine/../xine_osd_command.h \
+ xine/../xine_input_vdr.h xine/../xine_input_vdr_mrl.h \
+ xine/../tools/rle.h xine/vo_props.h xine/osd_manager.h xine/../logdefs.h
+tools/rle.o: tools/rle.c tools/../xine_osd_command.h tools/rle.h
+tools/ts.o: tools/ts.c tools/../logdefs.h tools/mpeg.h tools/ts.h \
+ tools/pes.h tools/h264.h
+tools/pes.o: tools/pes.c tools/../logdefs.h tools/mpeg.h tools/h264.h \
+ tools/pes.h
+tools/mpeg.o: tools/mpeg.c tools/mpeg.h
+tools/h264.o: tools/h264.c tools/../logdefs.h tools/bitstream.h \
+ tools/mpeg.h tools/h264.h
+xine_post_autocrop.o: xine_post_autocrop.c
+xine_post_swscale.o: xine_post_swscale.c xine/post_util.h
+xine_post_audiochannel.o: xine_post_audiochannel.c

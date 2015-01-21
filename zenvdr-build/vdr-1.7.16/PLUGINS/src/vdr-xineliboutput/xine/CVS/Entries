@@ -1,0 +1,25 @@
+/adjustable_scr.c/1.2/Sun Dec 14 01:21:20 2008//
+/adjustable_scr.h/1.1/Wed Dec  3 22:50:04 2008//
+/osd_manager.h/1.1/Sat Dec  6 16:17:18 2008//
+/post.h/1.3/Sun Dec 14 01:19:21 2008//
+/post_util.h/1.5/Sun Dec 14 00:52:35 2008//
+/ts2es.h/1.2/Tue Aug 18 10:04:32 2009//
+/vo_hook.h/1.3/Sun Dec 14 01:14:54 2008//
+/vo_osdreorder.c/1.1/Tue Mar 17 12:14:41 2009//
+/vo_osdreorder.h/1.1/Tue Mar 17 12:14:41 2009//
+/vo_osdscaler.h/1.1/Thu Nov 20 09:24:27 2008//
+/vo_post.h/1.3/Sun Dec 14 01:19:21 2008//
+D/BluRay////
+/demux_xvdr_tsdata.c/1.4/Sun Jul 18 12:32:25 2010//
+/demux_xvdr_tsdata.h/1.3/Sun Jul 18 12:32:25 2010//
+/post.c/1.26/Sun Jul 18 12:32:25 2010//
+/vo_lastpts.h/1.1/Tue Jan 26 11:36:21 2010//
+/vo_osdscaler.c/1.12/Sun Jul 18 12:32:25 2010//
+/vo_props.h/1.5/Sun Jul 18 12:32:25 2010//
+/ts2es.c/1.13/Sun Jul 18 17:51:35 2010//
+/demux_xvdr.c/1.38/Wed Mar 30 20:16:31 2011//
+/osd_manager.c/1.23/Wed Mar 30 20:16:31 2011//
+/vo_hook.c/1.6/Wed Mar 30 20:16:31 2011//
+/vo_lastpts.c/1.3/Wed Mar 30 20:16:31 2011//
+/xvdr_metronom.c/1.12/Wed Mar 30 20:16:31 2011//
+/xvdr_metronom.h/1.7/Wed Mar 30 20:16:31 2011//

@@ -1,0 +1,59 @@
+Command line: --cc=gcc  [gcc]
+C compiler: gcc
+Command line: --cxx=g++  [g++]
+C++ compiler: g++
+Command line: --add-cflags=-I../../..  [-I../../..]
+CFLAGS:  -I../../..
+Checking for pkg-config ... yes
+Checking for pkg-config libextractor ... no
+Checking for libextractor ... testhdr.c:2:23: schwerwiegender Fehler: extractor.h: Datei oder Verzeichnis nicht gefunden
+ #include <extractor.h>
+                       ^
+Kompilierung beendet.
+no
+--------
+/* gcc -g testhdr.c -o testhdr  -I../../..  -lextractor */
+#include <stdio.h> #include <extractor.h> int main(int c, char **v) { EXTRACTOR_getKeywords(0,0); }
+--------
+Checking for pkg-config libcap ... no
+Checking for libcap ... yes
+adding -lcap to LIBS_VDR
+Checking for pkg-config libxine ... no
+Checking for libxine ... testhdr.c:2:18: schwerwiegender Fehler: xine.h: Datei oder Verzeichnis nicht gefunden
+ #include <xine.h>
+                  ^
+Kompilierung beendet.
+no
+--------
+/* gcc -g testhdr.c -o testhdr  -I../../..  -lxine */
+#include <stdio.h> #include <xine.h> int main(int c, char **v) { xine_init(0); }
+--------
+Checking for pkg-config dlfcn ... no
+Checking for dlfcn ... yes
+adding -ldl to LIBS_DLFCN
+adding -ldl to LIBS_VDR
+
+Enabled features:
+  vdr
+  dlfcn
+  i18n
+  libcap
+Disabled features:
+  x11
+  fb
+  libxine
+  libextractor
+  libavutil
+  libjpeg
+  dbus_glib_1
+  xshm
+  xdpms
+  xinerama
+  xrender
+  xshape
+  opengl
+  pthread
+  vdpau
+
+Creating features.h ...
+Creating config.mak ...
